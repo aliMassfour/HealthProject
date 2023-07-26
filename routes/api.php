@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Survey\SurveyController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +23,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
+   Route::post('/user/store', [UserController::class, 'store']);
+   Route::get('/user/index',[UserController::class,'index']);
+});
+Route::group(['middleware'=>['auth:sanctum','admin']],function(){
+    Route::post('/survey/store',[SurveyController::class,'store']);
+});
