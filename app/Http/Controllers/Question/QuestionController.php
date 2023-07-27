@@ -8,6 +8,8 @@ use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+use function GuzzleHttp\json_encode;
+
 class QuestionController extends Controller
 {
     public function store($questions)
@@ -24,10 +26,15 @@ class QuestionController extends Controller
             if ($validator->fails()) {
                 throw new ValidationException($validator->getMessageBag());
             } else {
+               if(isset($question['options'])){
+                $question['options'] = json_encode($question['options']);
+               }else {
+                $question = array_merge($question,['options'=>null]);
+               }
                 $validateData[] = $question;
             }
         }
-
+        // return $validateData;
         Question::insert($validateData);
     }
 }

@@ -13,7 +13,7 @@ class SurveyController extends Controller
 {
     public function store(Request $request)
     {
-        // return $request->all();
+        // return $request->questions[1]['options'];
         $this->validate($request, [
             'ar_name' => 'required',
             'en_name' => 'required',
