@@ -39,4 +39,5 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     // this route is for valid survey
     Route::get('/survey/valid', [SurveyController::class, 'getValid']);
     Route::put('/survey/archive/{survey}', [SurveyController::class, 'archive']);
+    Route::get('/survey/show/{survey}', [SurveyController::class, 'show']);
 });

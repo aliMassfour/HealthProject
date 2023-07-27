@@ -119,5 +119,18 @@ class SurveyController extends Controller
     }
     public function show(Survey $survey)
     {
+        $sections = $survey->sections;
+        $sections = $sections->map(function ($section) {
+            $questions = $section->questions;
+            foreach ($questions as $question) {
+                $question->options = json_decode($question->options);
+            }
+            $section->setAttribute('questions', $questions);
+            return $section;
+        });
+        $survey->setAttribute('sections', $sections);
+        return response()->json([
+            'survey' => $survey
+        ]);
     }
 }
