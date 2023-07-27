@@ -11,6 +11,19 @@ use Illuminate\Support\Arr;
 
 class SurveyController extends Controller
 {
+    public function index()
+    {
+        $surveys = Survey::with('users')->get();
+        $surveys->filter(function ($survey) {
+            $survey->users->filter(function ($user) {
+                $user->courses = json_decode($user->courses);
+                $user->makeHidden('pivot');
+                return $user;
+            });
+            return $survey;
+        });
+        return $surveys;
+    }
     public function store(Request $request)
     {
         // return $request->questions[1]['options'];
@@ -46,5 +59,48 @@ class SurveyController extends Controller
                 'message' => json_decode($e->getMessage())
             ]);
         }
+    }
+    public function archive(Survey $survey)
+    {
+        $survey->status = 'archived';
+        if ($survey->save()) {
+            return response()->json([
+                'message' => 'survey archived successfully'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'error occoured please try agian'
+            ], 500);
+        }
+    }
+    public function getArchive()
+    {
+        $surveys = Survey::where('status', 'archived')->with('users')->get();
+        $surveys->filter(function ($survey) {
+            $survey->users->filter(function ($user) {
+                $user->courses = json_decode($user->courses);
+                $user->makeHidden('pivot');
+                return $user;
+            });
+            return $survey;
+        });
+        return response()->json([
+            'archived_survey' => $surveys
+        ]);
+    }
+    public function getValid()
+    {
+        $surveys = Survey::where('status', 'valid')->with('users')->get();
+        $surveys->filter(function ($survey) {
+            $survey->users->filter(function ($user) {
+                $user->courses = json_decode($user->courses);
+                $user->makeHidden('pivot');
+                return $user;
+            });
+            return $survey;
+        });
+        return response()->json([
+            'valid_survey' => $surveys
+        ]);
     }
 }

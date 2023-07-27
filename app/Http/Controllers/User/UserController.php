@@ -13,11 +13,12 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        //add the nedded mobile app view needed
+        //add the  mobile app view needed
         $users->filter(function ($user) {
             $user->setAttribute('city_name', $user->city->name);
             $user->setAttribute('directorate_name', $user->directorate->name);
             $user->makeHidden(['directorate', 'city', 'created_at', 'updated_at']);
+            $user->courses = json_decode($user->courses);
             return $user;
         });
         return response()->json([
@@ -35,10 +36,10 @@ class UserController extends Controller
             'city' => 'required',
             'password' => 'required|min:4|max:8',
             'phone' => 'required',
-            'certificate' => 'required' ,
+            'certificate' => 'required',
             'courses' => 'required|array',
             'gender' => 'required'
-            
+
         ]);
         try {
             //create new user
@@ -50,7 +51,7 @@ class UserController extends Controller
                 'directorate_id' => $request->directorate,
                 'role_id' => 2,
                 'phone' => $request->phone,
-                'gender' => $request->gender ,
+                'gender' => $request->gender,
                 'certificate' => $request->certificate,
                 'courses' => json_encode($request->courses)
             ]);
@@ -63,6 +64,19 @@ class UserController extends Controller
                 'message' => $e->getMessage(),
                 'user' => null,
             ], 500);
+        }
+    }
+    public function stopAccount(User $user)
+    {
+        $user->flag = '1';
+        if ($user->save()) {
+            return response()->json([
+                'message' => 'user account stopped successfully'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'error occured please try again'
+            ]);
         }
     }
 }
