@@ -24,7 +24,10 @@ class User extends Authenticatable
         'directorate_id',
         'city_id',
         'role_id',
-        'phone'
+        'phone',
+        'gender' ,
+        'certificate' ,
+        'courses'
     ];
 
     /**

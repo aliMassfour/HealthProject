@@ -26,11 +26,11 @@ class QuestionController extends Controller
             if ($validator->fails()) {
                 throw new ValidationException($validator->getMessageBag());
             } else {
-               if(isset($question['options'])){
-                $question['options'] = json_encode($question['options']);
-               }else {
-                $question = array_merge($question,['options'=>null]);
-               }
+                if (isset($question['options'])) {
+                    $question['options'] = json_encode($question['options']);
+                } else {
+                    $question = array_merge($question, ['options' => null]);
+                }
                 $validateData[] = $question;
             }
         }

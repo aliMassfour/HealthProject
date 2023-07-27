@@ -15,7 +15,8 @@ class Survey extends Model
         'start_date',
         'end_date',
         'questions_count',
-        'notes'
+        'notes',
+        'status'
     ];
     public function questions()
     {

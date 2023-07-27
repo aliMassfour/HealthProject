@@ -39,7 +39,9 @@ class DatabaseSeeder extends Seeder
             'phone' => '12345678' ,
             'role_id' =>1,
             'city_id' => 1 ,
-            'directorate_id' => 1
+            'directorate_id' => 1 ,
+            'gender' => 'male' ,
+            
         ]);
     }
 }
