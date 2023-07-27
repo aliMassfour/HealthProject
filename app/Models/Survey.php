@@ -30,4 +30,8 @@ class Survey extends Model
     {
         return $this->hasMany(Entry::class, 'survey_id', 'id');
     }
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'users_surveys', 'survey_id', 'user_id', 'id', 'id');
+    }
 }

@@ -25,8 +25,8 @@ class User extends Authenticatable
         'city_id',
         'role_id',
         'phone',
-        'gender' ,
-        'certificate' ,
+        'gender',
+        'certificate',
         'courses'
     ];
 
@@ -60,5 +60,9 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+    public function surveys()
+    {
+        return $this->belongsToMany(Survey::class, 'users_surveys', 'user_id', 'survey_id', 'id', 'id');
     }
 }

@@ -33,6 +33,7 @@ class SurveyController extends Controller
                 'questions_count' => sizeOf($questions),
                 'notes' => $request->has('notes') ? $request->notes : null
             ]);
+            $survey->users()->attach($request->volunteer);
             // the create question is in QuestionControler so i call it from instance with app
             $questionsController = app(QuestionController::class);
             $questions = $questions->map(function ($question) use ($survey) {

@@ -35,10 +35,10 @@ class UserController extends Controller
             'city' => 'required',
             'password' => 'required|min:4|max:8',
             'phone' => 'required',
-            'certificate' => 'required',
+            'certificate' => 'required' ,
             'courses' => 'required|array',
             'gender' => 'required'
-
+            
         ]);
         try {
             //create new user
@@ -50,7 +50,7 @@ class UserController extends Controller
                 'directorate_id' => $request->directorate,
                 'role_id' => 2,
                 'phone' => $request->phone,
-                'gender' => $request->gender,
+                'gender' => $request->gender ,
                 'certificate' => $request->certificate,
                 'courses' => json_encode($request->courses)
             ]);
