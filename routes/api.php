@@ -4,6 +4,7 @@ use App\Http\Controllers\Answer\AnswerController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Notification\NotificationController;
+use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Survey\SurveyController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::post('/user/store', [UserController::class, 'store']);
     Route::get('/user/index', [UserController::class, 'index']);
     Route::put('/user/stopaccount/{user}', [UserController::class, 'stopAccount']);
+    Route::put('/user/changepassword', [ProfileController::class, 'editPassword']);
 });
 // this group is for survey management
 Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {

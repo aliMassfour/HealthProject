@@ -15,11 +15,11 @@ class CreateSurveysTable extends Migration
     {
         Schema::create(config('survey.database.tables.surveys'), function (Blueprint $table) {
             $table->increments('id');
-            $table->string('ar_name');
-            $table->string('en_name');
-            $table->string('color');
-            $table->date('start_date');
-            $table->string('end_date');
+            $table->string('ar_name')->nullable();
+            $table->string('en_name')->nullable();
+            $table->string('color')->nullable();
+            $table->date('start_date')->nullable();
+            $table->string('end_date')->nullable();
             $table->integer('questions_count');
             $table->string('notes')->nullable();
             $table->timestamps();
