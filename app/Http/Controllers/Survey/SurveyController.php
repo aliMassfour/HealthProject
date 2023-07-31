@@ -12,9 +12,14 @@ use Illuminate\Support\Arr;
 
 class SurveyController extends Controller
 {
-    public function index()
+    public function index($status)
     {
-        $surveys = Survey::with('users')->get();
+        if ($status =="archived") {
+            $surveys = Survey::where('status', 'archived')->with('users')->get();
+        }
+        if ($status == "valid") {
+            $surveys = Survey::where('status', 'valid')->with('users')->get();
+        }
         $surveys->filter(function ($survey) {
             $survey->users->filter(function ($user) {
                 $user->courses = json_decode($user->courses);
@@ -23,7 +28,9 @@ class SurveyController extends Controller
             });
             return $survey;
         });
-        return $surveys;
+        return response()->json([
+            'surveys' => $surveys
+        ]);
     }
     public function store(Request $request)
     {
@@ -86,36 +93,7 @@ class SurveyController extends Controller
             ], 500);
         }
     }
-    public function getArchive()
-    {
-        $surveys = Survey::where('status', 'archived')->with('users')->get();
-        $surveys->filter(function ($survey) {
-            $survey->users->filter(function ($user) {
-                $user->courses = json_decode($user->courses);
-                $user->makeHidden('pivot');
-                return $user;
-            });
-            return $survey;
-        });
-        return response()->json([
-            'archived_survey' => $surveys
-        ]);
-    }
-    public function getValid()
-    {
-        $surveys = Survey::where('status', 'valid')->with('users')->get();
-        $surveys->filter(function ($survey) {
-            $survey->users->filter(function ($user) {
-                $user->courses = json_decode($user->courses);
-                $user->makeHidden('pivot');
-                return $user;
-            });
-            return $survey;
-        });
-        return response()->json([
-            'valid_survey' => $surveys
-        ]);
-    }
+   
     public function show(Survey $survey)
     {
         $sections = $survey->sections;

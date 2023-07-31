@@ -34,11 +34,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
 Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::post('/survey/store', [SurveyController::class, 'store']);
     // index is to view all valid and active survey
-    Route::get('/survey/index', [SurveyController::class, 'index']);
-    // this route is for archived survey
-    Route::get('/survey/archive', [SurveyController::class, 'getArchive']);
-    // this route is for valid survey
-    Route::get('/survey/valid', [SurveyController::class, 'getValid']);
+    Route::get('/survey/index/{status}', [SurveyController::class, 'index']);
     Route::put('/survey/archive/{survey}', [SurveyController::class, 'archive']);
     Route::get('/survey/show/{survey}', [SurveyController::class, 'show']);
     Route::get('/users/isanswer/{survey}', [SurveyController::class, 'getAnswersUser']);
