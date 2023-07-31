@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Answer\AnswerController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Survey\SurveyController;
 use App\Http\Controllers\User\UserController;
@@ -47,4 +48,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 // notificate group
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/lazyusers/notificate/{survey}', [NotificationController::class, 'notificate']);
+});
+// this group for home page
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/home', [HomeController::class, 'dashboard']);
 });
