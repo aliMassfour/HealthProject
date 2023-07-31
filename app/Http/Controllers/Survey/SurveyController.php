@@ -55,7 +55,6 @@ class SurveyController extends Controller
             foreach ($request->sections as $section) {
                 $section_id = $sectionController->store($survey, $section['section_name']);
                 $questions = collect($section['questions']);
-
                 $questions = $questions->map(function ($question) use ($survey, $section_id) {
                     $question = array_merge($question, ['survey_id' => $survey->id]);
                     $question = array_merge($question, ['section_id' => $section_id]);
@@ -131,6 +130,20 @@ class SurveyController extends Controller
         $survey->setAttribute('sections', $sections);
         return response()->json([
             'survey' => $survey
+        ]);
+    }
+    public function getAnswersUser(Survey $survey)
+    {
+        $users = $survey->users;
+        $answers_users = [];
+        foreach ($users as $user) {
+            // return $user->isAnswer($survey);
+            if ($user->isAnswer($survey)) {
+                $answers_users[] = $user;
+            }
+        }
+        return response()->json([
+            'users' => $answers_users
         ]);
     }
 }

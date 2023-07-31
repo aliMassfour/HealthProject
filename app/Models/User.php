@@ -65,4 +65,16 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Survey::class, 'users_surveys', 'user_id', 'survey_id', 'id', 'id');
     }
+    public function isAnswer(Survey $survey)
+    {
+        $entries = $survey->entries;
+        // return $[entries];
+        foreach ($entries as $entry) {
+            return $entry->participant_id;
+            if ($entry->participant_id == $this->id) {
+                return true;
+            }
+            return false;
+        }
+    }
 }

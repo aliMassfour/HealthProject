@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Answer\AnswerController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Survey\SurveyController;
 use App\Http\Controllers\User\UserController;
@@ -40,4 +41,9 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::get('/survey/valid', [SurveyController::class, 'getValid']);
     Route::put('/survey/archive/{survey}', [SurveyController::class, 'archive']);
     Route::get('/survey/show/{survey}', [SurveyController::class, 'show']);
+    Route::get('/users/isanswer/{survey}', [SurveyController::class, 'getAnswersUser']);
+});
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/answer/store/{survey}', [AnswerController::class, 'store']);
 });
