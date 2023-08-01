@@ -30,7 +30,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 // this group is for users management
 Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::post('/user/store', [UserController::class, 'store']);
-    Route::get('/user/index', [UserController::class, 'index']);
+    Route::get('/user/index/{role}', [UserController::class, 'index']);
     Route::put('/user/stopaccount/{user}', [UserController::class, 'stopAccount']);
     Route::put('/user/changepassword', [ProfileController::class, 'editPassword']);
     Route::put('/user/update/{user}', [UserController::class, 'update']);

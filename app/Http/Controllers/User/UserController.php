@@ -10,9 +10,15 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index($role)
     {
-        $users = User::all();
+        if ($role == 'admin') {
+            $users = User::where('role_id', '1')->get();
+        } else {
+            $users = User::where('role_id', '<>', '1')->get();
+        }
+
+
         //add the  mobile app view needed
         $users->filter(function ($user) {
             $user->setAttribute('city_name', $user->city->name);
