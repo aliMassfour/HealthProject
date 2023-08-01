@@ -14,10 +14,9 @@ class HomeController extends Controller
         $user = auth()->user();
         $UserController = app(UserController::class);
         $users = $UserController->index();
-        $users = User::where('role_id', '<>', '1')->get();
         return response()->json([
             'auth_user' => $user,
-            'users' => $users
+            'users'=>$users->original['users']
         ]);
     }
 }

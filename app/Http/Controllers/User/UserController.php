@@ -79,4 +79,32 @@ class UserController extends Controller
             ]);
         }
     }
+    public function update(Request $request, User $user)
+    {
+        $this->validate($request, [
+            'name' => 'required',
+            'username' => 'required',
+            'directorate' => 'required',
+            'city' => 'required',
+            'password' => 'required|min:4|max:8',
+            'phone' => 'required',
+        ]);
+        try {
+            $user->update([
+                'name' => $request->name,
+                'username' => $request->username,
+                'directorate' => $request->directorate,
+                'city' => $request->city,
+                'password' => Hash::make($request->password),
+                'phone' => $request->phone
+            ]);
+            return response()->json([
+                'message' => 'users information updated successfully'
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
