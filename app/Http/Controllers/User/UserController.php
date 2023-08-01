@@ -25,6 +25,18 @@ class UserController extends Controller
             'users' => $users
         ]);
     }
+    public function show(User $user)
+    {
+        $directorate = $user->directorate->name;
+        $city = $user->city->name;
+        $user->makeHidden(['city', 'directorate']);
+        $user->setAttribute('city_name', $city);
+        $user->setAttribute('directorate_name', $directorate);
+        $user->setAttribute('courses', json_decode($user->courses));
+        return response()->json([
+            'user' => $user
+        ]);
+    }
     public function store(Request $request)
     {
         //validate
@@ -81,15 +93,16 @@ class UserController extends Controller
     }
     public function update(Request $request, User $user)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'username' => 'required',
-            'directorate' => 'required',
-            'city' => 'required',
-            'password' => 'required|min:4|max:8',
-            'phone' => 'required',
-        ]);
+
         try {
+            $this->validate($request, [
+                'name' => 'required',
+                'username' => 'required',
+                'directorate' => 'required',
+                'city' => 'required',
+                'password' => 'required|min:4|max:8',
+                'phone' => 'required',
+            ]);
             $user->update([
                 'name' => $request->name,
                 'username' => $request->username,

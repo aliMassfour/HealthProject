@@ -33,6 +33,8 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::get('/user/index', [UserController::class, 'index']);
     Route::put('/user/stopaccount/{user}', [UserController::class, 'stopAccount']);
     Route::put('/user/changepassword', [ProfileController::class, 'editPassword']);
+    Route::put('/user/update/{user}', [UserController::class, 'update']);
+    Route::get('/user/show/{user}', [UserController::class, 'show']);
 });
 // this group is for survey management
 Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
