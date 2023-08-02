@@ -56,3 +56,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/home', [HomeController::class, 'dashboard']);
 });
+Route::get('/test',function(){
+    $survey =  App\Models\Survey::find(1);
+    return $survey->getAllQuestions();
+});

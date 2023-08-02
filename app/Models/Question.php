@@ -14,7 +14,9 @@ class Question extends Model
         'content' ,
         'type' ,
         'options' ,
-        'required'
+        'required',
+        'main_title' ,
+        'sub_title'
     ];
     public function survey()
     {
@@ -23,5 +25,13 @@ class Question extends Model
     public function section()
     {
         return $this->belongsTo(Section::class,'section_id','id');
+    }
+    public function Main_title()
+    {
+        return $this->belongsTo(MainTitle::class,'main_title','id');
+    }
+    public function SubTitle()
+    {
+        return $this->belongsTo(SubTitle::class,'sub_title','id');
     }
 }

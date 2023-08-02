@@ -34,4 +34,20 @@ class Survey extends Model
     {
         return $this->belongsToMany(User::class, 'users_surveys', 'survey_id', 'user_id', 'id', 'id');
     }
+    public function MainTitles()
+    {
+        return $this->hasMany(MainTitle::class, 'survey_id', 'id');
+    }
+    public function getAllQuestions()
+    {
+        return $this->load(['questions', 'MainTitles.subTitles.questions', 'MainTitles.questions'])
+            ->questions
+            ->merge(
+                $this->MainTitles->flatMap(function ($mainTitle) {
+                    return $mainTitle->subTitles->flatMap(function ($subTitle) {
+                        return $subTitle->questions;
+                    })->merge($mainTitle->questions);
+                })
+            );
+    }
 }
