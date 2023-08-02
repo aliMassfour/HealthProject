@@ -12,9 +12,83 @@ use Illuminate\Support\Arr;
 
 class SurveyController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/survey/index/{status}",
+     *     summary="Get all surveys",
+     *     description="Returns a list of all surveys with the specified status",
+     *     operationId="getSurveysByStatus",
+     *     tags={"surveys"},
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="path",
+     *         description="The status of the surveys to retrieve (valid/archived)",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="surveys",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id",
+     *                         type="integer"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="name",
+     *                         type="string"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="status",
+     *                         type="string"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="users",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(
+     *                                 property="id",
+     *                                 type="integer"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="name",
+     *                                 type="string"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="email",
+     *                                 type="string"
+     *                             ),
+     *                             @OA\Property(
+     *                                 property="courses",
+     *                                 type="array",
+     *                                 @OA\Items(
+     *                                     type="string"
+     *                                 )
+     *                             )
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Surveys not found"
+     *     )
+     * )
+     */
     public function index($status)
     {
-        if ($status =="archived") {
+        if ($status == "archived") {
             $surveys = Survey::where('status', 'archived')->with('users')->get();
         }
         if ($status == "valid") {
@@ -93,7 +167,7 @@ class SurveyController extends Controller
             ], 500);
         }
     }
-   
+
     public function show(Survey $survey)
     {
         $sections = $survey->sections;

@@ -10,28 +10,41 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
-    {
-        $this->validate($request, [
-            'username' => 'required',
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required|confirmed'
-        ]);
-        // return $request->all();
-        $user = User::create([
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'name' => $request->name
-
-        ]);
-        $token = $user->createToken('Application token' . $user->name)->plainTextToken;
-        return response()->json([
-            'user' => $user,
-            'token' => $token
-        ]);
-    }
+    /**
+     * @OA\Post(
+     * path="/api/login",
+     * operationId="authLogin",
+     * tags={"Login"},
+     * summary="User Login",
+     * description="Login User Here",
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *               type="object",
+     *               required={"username", "password"},
+     *               @OA\Property(property="username", type="text"),
+     *               @OA\Property(property="password", type="password")
+     *            ),
+     *        ),
+     *    ),
+     *    
+     *      @OA\Response(
+     *          response=200,
+     *          description="Login Successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *               @OA\Response(
+     *          response=401,
+     *          description="Invalid ",
+     *          @OA\JsonContent()
+     *       ),
+     *     
+     *
+     *     
+     * )
+     */
     public function login(Request $request)
     {
         $this->validate($request, [
@@ -52,6 +65,33 @@ class AuthController extends Controller
             ], '401');
         }
     }
+    /**
+     * @OA\Post(
+     * path="/api/logout",
+     * operationId="authLogout",
+     * tags={"logout"},
+     * summary="User Logout",
+     * description="Logout User Here",
+     * security={{"bearerAuth":{}}},
+     * 
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(),
+     *         @OA\MediaType(
+     *            mediaType="multipart/form-data",
+     *            @OA\Schema(
+     *            
+     *            ),
+     *        ),
+     *    ),
+     *    
+     *      @OA\Response(
+     *          response=200,
+     *          description="Logout successfully",
+     *          @OA\JsonContent()
+     *       ),
+     *     
+     * )
+     */
     public function logout(Request $request)
     {
 
