@@ -1,14 +1,124 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Your super  ApplicationAPI",
+        "title": "Your super Application API",
         "version": "8.1.6"
     },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/api"
+        }
+    ],
     "paths": {
-        "/api/login": {
+        "/answer/store/{survey}": {
             "post": {
                 "tags": [
-                    "Login"
+                    "surveys"
+                ],
+                "summary": "Send answers for a survey",
+                "description": "Submit answers for a survey",
+                "operationId": "AnswerSurveyStore",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "The ID of the survey",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "answers": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "question_id": {
+                                                    "type": "integer"
+                                                },
+                                                "value": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Answers successfully stored",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Answers successfully stored"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "object",
+                                            "example": {
+                                                "question_id": [
+                                                    "The question_id field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, an error occurred. Please try again."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
                 ],
                 "summary": "User Login",
                 "description": "Login User Here",
@@ -57,10 +167,10 @@
                 }
             }
         },
-        "/api/logout": {
+        "/logout": {
             "post": {
                 "tags": [
-                    "logout"
+                    "Auth"
                 ],
                 "summary": "User Logout",
                 "description": "Logout User Here",
@@ -92,28 +202,80 @@
                 ]
             }
         },
-        "/api/survey/index/{status}": {
+        "/user/changePassword": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Edit user password",
+                "description": "This endpoint allows the user to change their password.",
+                "operationId": "editPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "_method": {
+                                        "type": "string",
+                                        "enum": [
+                                            "PUT"
+                                        ]
+                                    },
+                                    "current_password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "format": "password"
+                                    },
+                                    "new_password_confirmation": {
+                                        "type": "string",
+                                        "format": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password change successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Password changed successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/app/survey/index": {
             "get": {
                 "tags": [
                     "surveys"
                 ],
-                "summary": "Get all surveys",
-                "description": "Returns a list of all surveys with the specified status",
-                "operationId": "getSurveysByStatus",
-                "parameters": [
-                    {
-                        "name": "status",
-                        "in": "path",
-                        "description": "The status of the surveys to retrieve (valid/archived)",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
+                "summary": "Show all available surveys for authenticated user",
+                "description": "Send a request to fetch surveys",
+                "operationId": "AppSurveyIndex",
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "Successfully retrieved surveys",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -122,36 +284,33 @@
                                             "type": "array",
                                             "items": {
                                                 "properties": {
-                                                    "id": {
+                                                    "ar_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "en_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "color": {
+                                                        "type": "string"
+                                                    },
+                                                    "questions_count": {
                                                         "type": "integer"
                                                     },
-                                                    "name": {
-                                                        "type": "string"
+                                                    "start_date": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "end_date": {
+                                                        "type": "string",
+                                                        "format": "date-time"
                                                     },
                                                     "status": {
                                                         "type": "string"
                                                     },
-                                                    "users": {
+                                                    "notes": {
                                                         "type": "array",
                                                         "items": {
-                                                            "properties": {
-                                                                "id": {
-                                                                    "type": "integer"
-                                                                },
-                                                                "name": {
-                                                                    "type": "string"
-                                                                },
-                                                                "email": {
-                                                                    "type": "string"
-                                                                },
-                                                                "courses": {
-                                                                    "type": "array",
-                                                                    "items": {
-                                                                        "type": "string"
-                                                                    }
-                                                                }
-                                                            },
-                                                            "type": "object"
+                                                            "type": "string"
                                                         }
                                                     }
                                                 },
@@ -163,11 +322,100 @@
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "description": "Surveys not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/app/survey/show/{survey}": {
+            "get": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Retrieve questions for a survey",
+                "description": "This endpoint retrieves all the questions associated with a given survey. It includes questions directly attached to the survey and questions belonging to the main titles and sub-titles of the survey.",
+                "operationId": "showSurveyQuestions",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "ID of the survey",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "survey_id": {
+                                                "type": "integer"
+                                            },
+                                            "content": {
+                                                "type": "string"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            },
+                                            "options": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                },
+                                                "nullable": true
+                                            },
+                                            "required": {
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "main_title": {
+                                                "type": "integer",
+                                                "nullable": true
+                                            },
+                                            "sub_title": {
+                                                "type": "integer",
+                                                "nullable": true
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     }

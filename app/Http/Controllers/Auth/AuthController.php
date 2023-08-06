@@ -12,9 +12,9 @@ class AuthController extends Controller
 {
     /**
      * @OA\Post(
-     * path="/api/login",
+     * path="/login",
      * operationId="authLogin",
-     * tags={"Login"},
+     * tags={"Auth"},
      * summary="User Login",
      * description="Login User Here",
      *     @OA\RequestBody(
@@ -67,9 +67,9 @@ class AuthController extends Controller
     }
     /**
      * @OA\Post(
-     * path="/api/logout",
+     * path="/logout",
      * operationId="authLogout",
-     * tags={"logout"},
+     * tags={"Auth"},
      * summary="User Logout",
      * description="Logout User Here",
      * security={{"bearerAuth":{}}},

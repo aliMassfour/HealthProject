@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Home\HomeController;
 use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Survey\SurveyAndriodController;
 use App\Http\Controllers\Survey\SurveyController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::post('/user/store', [UserController::class, 'store']);
     Route::get('/user/index/{role}', [UserController::class, 'index']);
     Route::put('/user/stopaccount/{user}', [UserController::class, 'stopAccount']);
-    Route::put('/user/changepassword', [ProfileController::class, 'editPassword']);
+    Route::put('/user/changePassword', [ProfileController::class, 'editPassword']);
     Route::put('/user/update/{user}', [UserController::class, 'update']);
     Route::get('/user/show/{user}', [UserController::class, 'show']);
 });
@@ -56,7 +57,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/home', [HomeController::class, 'dashboard']);
 });
-Route::get('/test',function(){
+Route::group([], function () {
+    Route::get('/app/survey/index', [SurveyAndriodController::class, 'index']);
+    Route::get('/app/survey/show/{survey}',[SurveyAndriodController::class,'show']);
+});
+Route::get('/test', function () {
     $survey =  App\Models\Survey::find(1);
     return $survey->getAllQuestions();
 });
