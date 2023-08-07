@@ -26,7 +26,7 @@ class Question extends Model
     {
         return $this->belongsTo(Section::class,'section_id','id');
     }
-    public function Main_title()
+    public function MainTitle()
     {
         return $this->belongsTo(MainTitle::class,'main_title','id');
     }

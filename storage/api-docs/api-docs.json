@@ -408,6 +408,246 @@
                     }
                 ]
             }
+        },
+        "/api/survey/store": {
+            "post": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Store a new survey",
+                "description": "Please ensure to send the questions in the same order as they were created.options and main_title and sub_title must be null if the question donst have it ",
+                "operationId": "65ff2a0e92750623bad3f6e7937d9d93",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ar_name": {
+                                        "type": "string"
+                                    },
+                                    "en_name": {
+                                        "type": "string"
+                                    },
+                                    "color": {
+                                        "type": "string"
+                                    },
+                                    "volunteer": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "questions": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "content": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "options": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "null"
+                                                        }
+                                                    ]
+                                                },
+                                                "required": {
+                                                    "type": "boolean"
+                                                },
+                                                "main_title": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "string"
+                                                        },
+                                                        {
+                                                            "type": "null"
+                                                        }
+                                                    ]
+                                                },
+                                                "sub_title": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "string"
+                                                        },
+                                                        {
+                                                            "type": "null"
+                                                        }
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "questions_count": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Survey created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Survey is created successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/survey/show/{survey}": {
+            "get": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Retrieve a survey",
+                "description": "Retrieves a survey along with its questions.",
+                "operationId": "9e4f8afab631ac281fa14bc5a70fed44",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "ID of the survey",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Survey retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "questions": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "content": {
+                                                        "type": "string"
+                                                    },
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "options": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": {
+                                                        "type": "boolean"
+                                                    },
+                                                    "main_title_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "sub_title_name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Survey not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/users/isanswer/{survey}": {
+            "get": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Get users who have answered a survey",
+                "operationId": "abe85933cdf7f025b997f105b153e82f",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "ID of the survey",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "items": {}
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
