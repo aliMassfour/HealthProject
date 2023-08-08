@@ -10,6 +10,111 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/user/index/{role}",
+     *     tags={"Users"},
+     *     summary="Get users by role",
+     *     description="Retrieves a list of users based on the specified role.",
+     *     @OA\Parameter(
+     *         name="role",
+     *         in="path",
+     *         description="The role of the users to retrieve",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"admin", "user"}
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="users",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="role_id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="username",
+     *                         type="string",
+     *                         example="admin"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="name",
+     *                         type="string",
+     *                         example="admin"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="phone",
+     *                         type="string",
+     *                         example="12345678"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="directorate_id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="city_id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="flag",
+     *                         type="string",
+     *                         example="0"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="certificate",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string"
+     *                         ),
+     *                         example={"certificate1", "certificate2"},
+     *                         nullable=true
+     *                     ),
+     *                     @OA\Property(
+     *                         property="gender",
+     *                         type="string",
+     *                         example="male"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="courses",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string"
+     *                         ),
+     *                         example={"course1", "course2"},
+     *                         nullable=true
+     *                     ),
+     *                     @OA\Property(
+     *                         property="city_name",
+     *                         type="string",
+     *                         example="city one"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="directorate_name",
+     *                         type="string",
+     *                         example="directorate one"
+     *                     ),
+     *                 )
+     *             )
+     *         )
+     *     ),
+     * )
+     */
     public function index($role)
     {
         if ($role == 'admin') {
@@ -31,6 +136,97 @@ class UserController extends Controller
             'users' => $users
         ]);
     }
+    /**
+     * @OA\Get(
+     *     path="/user/show/{user}",
+     *     tags={"Users"},
+     *     summary="Get user details",
+     *     description="Retrieves details of a specific user.",
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         description="The ID of the user",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="id",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="role_id",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="username",
+     *                     type="string",
+     *                     example="admin"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     example="admin"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="phone",
+     *                     type="string",
+     *                     example="12345678"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="flag",
+     *                     type="string",
+     *                     example="0"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="certificate",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string"
+     *                     ),
+     *                     nullable=true
+     *                 ),
+     *                 @OA\Property(
+     *                     property="gender",
+     *                     type="string",
+     *                     example="male"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="courses",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string"
+     *                     ),
+     *                     nullable=true
+     *                 ),
+     *                 @OA\Property(
+     *                     property="city_name",
+     *                     type="string",
+     *                     example="city one"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="directorate_name",
+     *                     type="string",
+     *                     example="directorate one"
+     *                 ),
+     *             )
+     *         )
+     *     ),
+     * security={{"bearerAuth": {}}}
+     * )
+     */
     public function show(User $user)
     {
         $directorate = $user->directorate->name;
@@ -43,6 +239,134 @@ class UserController extends Controller
             'user' => $user
         ]);
     }
+    /**
+     * @OA\Post(
+     *     path="/user/store",
+     *     tags={"Users"},
+     *     summary="Create a new user",
+     *     description="Creates a new user with the provided information.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="name",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="phone",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="username",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="directorate",
+     *                 type="integer",
+     *                 format="int64"
+     *             ),
+     *             @OA\Property(
+     *                 property="city",
+     *                 type="integer",
+     *                 format="int64"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string"
+     *             ),
+     *             @OA\Property(
+     *                 property="certificate",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="string"
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="courses",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="string"
+     *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="gender",
+     *                 type="string"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="the user is created successfully"
+     *             ),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="id",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                     example="John Doe"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="username",
+     *                     type="string",
+     *                     example="johndoe"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="phone",
+     *                     type="string",
+     *                     example="1234567890"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="directorate_id",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="city_id",
+     *                     type="integer",
+     *                     example=1
+     *                 ),
+     *                 @OA\Property(
+     *                     property="role_id",
+     *                     type="integer",
+     *                     example=2
+     *                 ),
+     *                 @OA\Property(
+     *                     property="gender",
+     *                     type="string",
+     *                     example="male"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="certificate",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string"
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="courses",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string"
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     * security={{"bearerAuth": {}}}
+     * )
+     */
     public function store(Request $request)
     {
         //validate
@@ -84,6 +408,37 @@ class UserController extends Controller
             ], 500);
         }
     }
+    /**
+     * @OA\Put(
+     *     path="/user/stopaccount/{user}",
+     *     tags={"Users"},
+     *     summary="Stop user account",
+     *     description="Stops the account of a specific user.",
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         description="The ID of the user",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="user account stopped successfully"
+     *             )
+     *         )
+     *     ),
+     * security={{"bearerAuth": {}}}
+     * )
+     */
     public function stopAccount(User $user)
     {
         $user->flag = '1';
@@ -97,6 +452,71 @@ class UserController extends Controller
             ]);
         }
     }
+    /**
+     * @OA\Put(
+     *     path="/user/update/{user}",
+     *     tags={"Users"},
+     *     summary="Update user information",
+     *     description="Updates the information of a specific user.",
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         description="The ID of the user",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="name",
+     *                 type="string",
+     *                 example="John Doe"
+     *             ),
+     *             @OA\Property(
+     *                 property="username",
+     *                 type="string",
+     *                 example="johndoe"
+     *             ),
+     *             @OA\Property(
+     *                 property="directorate",
+     *                 type="string",
+     *             ),
+     *             @OA\Property(
+     *                 property="city",
+     *                 type="string",
+     *                 example="New York"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 example="newpassword"
+     *             ),
+     *             @OA\Property(
+     *                 property="phone",
+     *                 type="string",
+     *                 example="1234567890"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="users information updated successfully"
+     *             )
+     *         )
+     *     ),
+     * security={{"bearerAuth": {}}}
+     * )
+     */
     public function update(Request $request, User $user)
     {
 
