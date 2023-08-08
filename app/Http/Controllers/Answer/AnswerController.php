@@ -16,7 +16,7 @@ class AnswerController extends Controller
  *     summary="Send answers for a survey",
  *     description="Submit answers for a survey",
  *     operationId="AnswerSurveyStore",
- *     tags={"surveys"},
+ *     tags={"Android Application"},
  *     @OA\Parameter(
  *         name="survey",
  *         in="path",

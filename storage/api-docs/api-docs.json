@@ -13,7 +13,7 @@
         "/answer/store/{survey}": {
             "post": {
                 "tags": [
-                    "surveys"
+                    "Android Application"
                 ],
                 "summary": "Send answers for a survey",
                 "description": "Submit answers for a survey",
@@ -268,7 +268,7 @@
         "/app/survey/index": {
             "get": {
                 "tags": [
-                    "surveys"
+                    "Android Application"
                 ],
                 "summary": "Show all available surveys for authenticated user",
                 "description": "Send a request to fetch surveys",
@@ -334,7 +334,7 @@
         "/app/survey/show/{survey}": {
             "get": {
                 "tags": [
-                    "surveys"
+                    "Android Application"
                 ],
                 "summary": "Retrieve questions for a survey",
                 "description": "This endpoint retrieves all the questions associated with a given survey. It includes questions directly attached to the survey and questions belonging to the main titles and sub-titles of the survey.",
@@ -409,14 +409,14 @@
                 ]
             }
         },
-        "/api/survey/store": {
+        "/survey/store": {
             "post": {
                 "tags": [
                     "surveys"
                 ],
                 "summary": "Store a new survey",
                 "description": "Please ensure to send the questions in the same order as they were created.options and main_title and sub_title must be null if the question donst have it ",
-                "operationId": "65ff2a0e92750623bad3f6e7937d9d93",
+                "operationId": "79dc685ecd46fb4b4947cee4af95c4de",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -528,6 +528,46 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/survey/duplicate/{survey}": {
+            "post": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Duplicate a survey",
+                "description": "Creates a duplicate of the specified survey, including its questions, main titles, and subtitles.",
+                "operationId": "d7eae834ad341b7f57fad0162a3ae4a8",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "The ID of the survey to duplicate",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success message",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "The success message indicating that the survey was duplicated successfully.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/survey/show/{survey}": {

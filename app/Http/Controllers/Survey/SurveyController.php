@@ -10,6 +10,7 @@ use App\Models\Survey;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use PhpParser\Node\Expr\Cast\Object_;
 
 class SurveyController extends Controller
 {
@@ -47,7 +48,7 @@ class SurveyController extends Controller
      * @throws \Exception
      *
      * @OA\Post(
-     *     path="/api/survey/store",
+     *     path="/survey/store",
      *     summary="Store a new survey",
      *     description="Please ensure to send the questions in the same order as they were created.options and main_title and sub_title must be null if the question donst have it ",
      *     tags={"surveys"},
@@ -163,30 +164,72 @@ class SurveyController extends Controller
             return $e->getMessage();
         }
     }
-    public function dublicate(Survey $survey)
+    /**
+ * @OA\Post(
+ *     path="/survey/duplicate/{survey}",
+ *     tags={"surveys"},
+ *     summary="Duplicate a survey",
+ *     description="Creates a duplicate of the specified survey, including its questions, main titles, and subtitles.",
+ *     @OA\Parameter(
+ *         name="survey",
+ *         in="path",
+ *         description="The ID of the survey to duplicate",
+ *         required=true,
+ *         @OA\Schema(
+ *             type="integer",
+ *             format="int64"
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Success message",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="message",
+ *                 type="string",
+ *                 description="The success message indicating that the survey was duplicated successfully."
+ *             )
+ *         )
+ *     )
+ * )
+ */
+    public function duplicate(Survey $survey)
     {
         $questions = $survey->questions()->with(['MainTitle', 'SubTitle'])->get();
         $questions_count = $questions->count();
         $new_survey = Survey::create([
             'questions_count' => $questions_count
         ]);
+        // we need to create the survey information from questions and main titles and subtitles 
+        // we know that every questions maybe belongs to sub title and main title 
+        // and also many questions maybe have the same main_title or the same subtitle 
+        // by the main title or the sub title must created once so for that i use this arrays to 
+        // store the main an sub titles that i created  
         $main_titles = [];
         $sub_titles = [];
         $main_title = null;
         $sub_title = null;
-
-        foreach ($questions as &$question) {
+        $new_questions = [];
+        foreach ($questions as $question) {
+            $new_question = [
+                'content' => $question->content,
+                'survey_id' => $new_survey->id,
+                'type' => $question->type,
+                'required' => $question->required
+            ];
+            if ($question->options !== null)
+                $new_question['options'] = json_decode($question->options);
             if ($question->main_title !== null) {
                 if (!in_array($question->MainTitle->name, $main_titles)) {
                     $main_title = $new_survey->MainTitles()->create([
                         'name' => $question->MainTitle->name
                     ]);
-                    $main_titles[] = $question->main_title;
+                    $main_titles[] = $question->MainTitle->name;
                 }
-                $question->setHidden(['main_title']);
-                // $question->main_title = $main_title->id;
+                $new_question['main_title'] = $main_title->id;
             } else {
-                // $question->main_title = null;
+                $new_question['main_title'] = null;
             }
 
             if ($question->sub_title !== null) {
@@ -194,19 +237,19 @@ class SurveyController extends Controller
                     $sub_title = $main_title->SubTitles()->create([
                         'name' => $question->SubTitle->name
                     ]);
-                    $sub_titles[] = $question->sub_title;
+                    $sub_titles[] = $question->SubTitle->name;
                 }
-                $question->setHidden(['sub_title']);
-                // $question->sub_title = $sub_title->id;  
+                $new_question['sub_title'] = $sub_title->id;
             } else {
-                // $question->sub_title = null;
+                $new_question['sub_title'] = null;
             }
-            $question->survey_id = $new_survey->id;
+            $new_questions[] = $new_question;
         }
-
-        // $QuestionController = app(QuestionController::class);
-        // $QuestionController->store($questions);
-        return $questions;
+        $QuestionController = app(QuestionController::class);
+        $QuestionController->store($new_questions);
+        return response()->json([
+            'message' => 'survey is duplicated successfully'
+        ]);
     }
     public function archive(Survey $survey)
     {

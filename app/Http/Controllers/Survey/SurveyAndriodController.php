@@ -18,7 +18,7 @@ class SurveyAndriodController extends Controller
  *     summary="Show all available surveys for authenticated user",
  *     description="Send a request to fetch surveys",
  *     operationId="AppSurveyIndex",
- *     tags={"surveys"},
+ *     tags={"Android Application"},
  *     @OA\Response(
  *         response=200,
  *         description="Successfully retrieved surveys",
@@ -99,7 +99,7 @@ class SurveyAndriodController extends Controller
      * @OA\Get(
      *     path="/app/survey/show/{survey}",
      *     operationId="showSurveyQuestions",
-     *     tags={"surveys"},
+     *     tags={"Android Application"},
      *     summary="Retrieve questions for a survey",
      *     description="This endpoint retrieves all the questions associated with a given survey. It includes questions directly attached to the survey and questions belonging to the main titles and sub-titles of the survey.",
      *     @OA\Parameter(
