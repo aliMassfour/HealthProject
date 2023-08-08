@@ -202,6 +202,146 @@
                 ]
             }
         },
+        "/home": {
+            "get": {
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "User dashboard",
+                "description": "Retrieves the dashboard information for the authenticated user.",
+                "operationId": "0f67def6e4230a7cdafc3f58cc154ae2",
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "auth_user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "format": "int64",
+                                                    "example": 1
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "username": {
+                                                    "type": "string",
+                                                    "example": "johndoe"
+                                                },
+                                                "certificate": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "XYZ Certificate"
+                                                    }
+                                                },
+                                                "courses": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "Course A"
+                                                    }
+                                                },
+                                                "directorate_name": {
+                                                    "type": "string",
+                                                    "example": "Marketing"
+                                                },
+                                                "directorate_id": {
+                                                    "type": "integer",
+                                                    "format": "int64",
+                                                    "example": 1
+                                                },
+                                                "city_name": {
+                                                    "type": "string",
+                                                    "example": "New York"
+                                                },
+                                                "city_id": {
+                                                    "type": "integer",
+                                                    "format": "int64",
+                                                    "example": 1
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "1234567890"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "format": "int64",
+                                                        "example": 2
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Jane Smith"
+                                                    },
+                                                    "username": {
+                                                        "type": "string",
+                                                        "example": "janesmith"
+                                                    },
+                                                    "certificate": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "ABC Certificate"
+                                                        }
+                                                    },
+                                                    "courses": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "example": "Course B"
+                                                        }
+                                                    },
+                                                    "directorate_name": {
+                                                        "type": "string",
+                                                        "example": "Sales"
+                                                    },
+                                                    "directorate_id": {
+                                                        "type": "integer",
+                                                        "format": "int64",
+                                                        "example": 2
+                                                    },
+                                                    "city_name": {
+                                                        "type": "string",
+                                                        "example": "London"
+                                                    },
+                                                    "city_id": {
+                                                        "type": "integer",
+                                                        "format": "int64",
+                                                        "example": 2
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "9876543210"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/user/changePassword": {
             "post": {
                 "tags": [
