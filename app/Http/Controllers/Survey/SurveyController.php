@@ -7,6 +7,7 @@ use App\Http\Controllers\Question\QuestionController;
 use App\Http\Controllers\SectionController;
 use App\Models\MainTitle;
 use App\Models\Survey;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -107,9 +108,6 @@ class SurveyController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request->questions[1]['options'];
-
-        // return $request->sections[0]['questions'];
         try {
             $this->validate($request, [
                 'ar_name' => 'required',
@@ -165,35 +163,36 @@ class SurveyController extends Controller
         }
     }
     /**
- * @OA\Post(
- *     path="/survey/duplicate/{survey}",
- *     tags={"surveys"},
- *     summary="Duplicate a survey",
- *     description="Creates a duplicate of the specified survey, including its questions, main titles, and subtitles.",
- *     @OA\Parameter(
- *         name="survey",
- *         in="path",
- *         description="The ID of the survey to duplicate",
- *         required=true,
- *         @OA\Schema(
- *             type="integer",
- *             format="int64"
- *         )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Success message",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(
- *                 property="message",
- *                 type="string",
- *                 description="The success message indicating that the survey was duplicated successfully."
- *             )
- *         )
- *     )
- * )
- */
+     * @OA\Post(
+     *     path="/survey/duplicate/{survey}",
+     *     tags={"surveys"},
+     *     summary="Duplicate a survey",
+     *     description="Creates a duplicate of the specified survey, including its questions, main titles, and subtitles.",
+     *     @OA\Parameter(
+     *         name="survey",
+     *         in="path",
+     *         description="The ID of the survey to duplicate",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success message",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 description="The success message indicating that the survey was duplicated successfully."
+     *             )
+     *         )
+     *     ),
+     *  security={{"bearerAuth": {}}}
+     * )
+     */
     public function duplicate(Survey $survey)
     {
         $questions = $survey->questions()->with(['MainTitle', 'SubTitle'])->get();
@@ -343,7 +342,80 @@ class SurveyController extends Controller
      *                 property="users",
      *                 type="array",
      *                 @OA\Items(
-     *                     
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="role_id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="username",
+     *                         type="string",
+     *                         example="admin"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="name",
+     *                         type="string",
+     *                         example="admin"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="phone",
+     *                         type="string",
+     *                         example="12345678"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="directorate_id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="city_id",
+     *                         type="integer",
+     *                         example=1
+     *                     ),
+     *                     @OA\Property(
+     *                         property="flag",
+     *                         type="string",
+     *                         example="0"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="certificate",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string"
+     *                         ),
+     *                         example={"certificate1", "certificate2"},
+     *                         nullable=true
+     *                     ),
+     *                     @OA\Property(
+     *                         property="gender",
+     *                         type="string",
+     *                         example="male"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="courses",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string"
+     *                         ),
+     *                         example={"course1", "course2"},
+     *                         nullable=true
+     *                     ),
+     *                     @OA\Property(
+     *                         property="city_name",
+     *                         type="string",
+     *                         example="city one"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="directorate_name",
+     *                         type="string",
+     *                         example="directorate one"
+     *                     ),
      *                 )
      *             )
      *         )
@@ -365,6 +437,148 @@ class SurveyController extends Controller
         }
         return response()->json([
             'users' => $answers_users
+        ]);
+    }
+    /**
+     * @OA\Put(
+     *     path="/survey/update/{survey}",
+     *     tags={"surveys"},
+     *     summary="Update a survey",
+     *     description="Updates a survey with the specified data",
+     *     @OA\Parameter(
+     *         name="survey",
+     *         in="path",
+     *         description="ID of the survey to update",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\MediaType(
+     *             mediaType="multipart/formdata",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="ar_name",
+     *                     type="string",
+     *                     description="Arabic name of the survey"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="en_name",
+     *                     type="string",
+     *                     description="English name of the survey"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="color",
+     *                     type="string",
+     *                     description="Color of the survey"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="start_date",
+     *                     type="string",
+     *                     format="date",
+     *                     description="Start date of the survey (YYYY-MM-DD)"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="end_date",
+     *                     type="string",
+     *                     format="date",
+     *                     description="End date of the survey (YYYY-MM-DD)"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="notes",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string"
+     *                     ),
+     *                     description="Array of notes for the survey"
+     *                 ),
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 description="Success message"
+     *             )
+     *         )
+     *     ),
+     * security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
+    public function update(Request $request, Survey $survey)
+    {
+        $this->validate($request, [
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'notes' => 'array'
+        ]);
+        $survey->ar_name = $request->has('ar_name') ? $request->ar_name : $survey->ar_name;
+        $survey->en_name = $request->has('en_name') ? $request->en_name : $survey->en_name;
+        $survey->color = $request->has('color') ? $request->color : $survey->color;
+        $survey->start_date = $request->has('start_date') ? $request->start_date : $survey->start_date;
+        $survey->end_date = $request->has('end_date') ? $request->end_date : $survey->end_date;
+        $survey->notes = $request->has('notes') ? json_encode($request->notes) : $survey->notes;
+        if ($survey->save()) {
+            return response()->json([
+                'message' => 'survey updated successfully'
+            ]);
+        }
+    }
+    /**
+     * @OA\Put(
+     *     path="/survey/reuse/{survey}",
+     *     tags={"surveys"},
+     *     summary="Reuse a survey",
+     *     description="Updates the start and end dates of a survey to reuse it",
+     *     @OA\Parameter(
+     *         name="survey",
+     *         in="path",
+     *         description="ID of the survey to reuse",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 description="Success message"
+     *             )
+     *         )
+     *     ),
+     * security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+    public function reuse(Survey $survey)
+    {
+        $survey->status = 'valid';
+        $start = Carbon::parse($survey->start_date);
+        $end = Carbon::parse($survey->end_date);
+        $duration = $end->diff($start);
+        $newEndDate = Carbon::now()->add($duration);
+        $survey->start_date = Carbon::now();
+        $survey->end_date = $newEndDate;
+        $survey->save();
+        return response()->json([
+            'message' => 'This survey is active.'
         ]);
     }
 }

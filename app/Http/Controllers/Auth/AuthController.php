@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('accountlock')->except('logout');
+    }
     /**
      * @OA\Post(
      * path="/login",

@@ -707,7 +707,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/survey/show/{survey}": {
@@ -813,7 +818,208 @@
                                     "properties": {
                                         "users": {
                                             "type": "array",
-                                            "items": {}
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "role_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "username": {
+                                                        "type": "string",
+                                                        "example": "admin"
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "admin"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "12345678"
+                                                    },
+                                                    "directorate_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "city_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "flag": {
+                                                        "type": "string",
+                                                        "example": "0"
+                                                    },
+                                                    "certificate": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "example": [
+                                                            "certificate1",
+                                                            "certificate2"
+                                                        ],
+                                                        "nullable": true
+                                                    },
+                                                    "gender": {
+                                                        "type": "string",
+                                                        "example": "male"
+                                                    },
+                                                    "courses": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        },
+                                                        "example": [
+                                                            "course1",
+                                                            "course2"
+                                                        ],
+                                                        "nullable": true
+                                                    },
+                                                    "city_name": {
+                                                        "type": "string",
+                                                        "example": "city one"
+                                                    },
+                                                    "directorate_name": {
+                                                        "type": "string",
+                                                        "example": "directorate one"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/survey/update/{survey}": {
+            "put": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Update a survey",
+                "description": "Updates a survey with the specified data",
+                "operationId": "39ed9ec8fc117fa5b74752cb85c22a7f",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "ID of the survey to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "multipart/formdata": {
+                            "schema": {
+                                "properties": {
+                                    "ar_name": {
+                                        "description": "Arabic name of the survey",
+                                        "type": "string"
+                                    },
+                                    "en_name": {
+                                        "description": "English name of the survey",
+                                        "type": "string"
+                                    },
+                                    "color": {
+                                        "description": "Color of the survey",
+                                        "type": "string"
+                                    },
+                                    "start_date": {
+                                        "description": "Start date of the survey (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "end_date": {
+                                        "description": "End date of the survey (YYYY-MM-DD)",
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "notes": {
+                                        "description": "Array of notes for the survey",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/survey/reuse/{survey}": {
+            "put": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Reuse a survey",
+                "description": "Updates the start and end dates of a survey to reuse it",
+                "operationId": "c14b286be6f4a03fb92bdd3f3a16897c",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "ID of the survey to reuse",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Success message",
+                                            "type": "string"
                                         }
                                     },
                                     "type": "object"
@@ -939,7 +1145,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/user/show/{user}": {
@@ -1073,12 +1284,14 @@
                                         "type": "string"
                                     },
                                     "certificate": {
+                                        "description": "write the certificate",
                                         "type": "array",
                                         "items": {
                                             "type": "string"
                                         }
                                     },
                                     "courses": {
+                                        "description": "write the courses",
                                         "type": "array",
                                         "items": {
                                             "type": "string"
@@ -1136,6 +1349,10 @@
                                                 },
                                                 "gender": {
                                                     "type": "string",
+                                                    "enum": [
+                                                        "male",
+                                                        "female"
+                                                    ],
                                                     "example": "male"
                                                 },
                                                 "certificate": {
@@ -1235,31 +1452,26 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "name": {
-                                        "type": "string",
-                                        "example": "John Doe"
+                                        "type": "string"
                                     },
                                     "username": {
-                                        "type": "string",
-                                        "example": "johndoe"
+                                        "type": "string"
                                     },
                                     "directorate": {
                                         "type": "string"
                                     },
                                     "city": {
-                                        "type": "string",
-                                        "example": "New York"
+                                        "type": "string"
                                     },
                                     "password": {
-                                        "type": "string",
-                                        "example": "newpassword"
+                                        "type": "string"
                                     },
                                     "phone": {
-                                        "type": "string",
-                                        "example": "1234567890"
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"

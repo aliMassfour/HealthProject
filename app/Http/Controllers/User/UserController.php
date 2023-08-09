@@ -113,6 +113,7 @@ class UserController extends Controller
      *             )
      *         )
      *     ),
+     *  security={{"bearerAuth": {}}}
      * )
      */
     public function index($role)
@@ -247,52 +248,57 @@ class UserController extends Controller
      *     description="Creates a new user with the provided information.",
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="name",
-     *                 type="string"
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="phone",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="username",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="directorate",
+     *                     type="integer",
+     *                     format="int64",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="city",
+     *                     type="integer",
+     *                     format="int64",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="certificate",
+     *                     type="array",
+     *                     description="write the certificate",
+     *                     @OA\Items(
+     *                         type="string",
+     *                     ),
+     *                 ),
+     *                 @OA\Property(
+     *                     property="courses",
+     *                     type="array",
+     *                     description="write the courses",
+     *                     @OA\Items(
+     *                         type="string",
+     *                     ),
+     *                 ),
+     *                 @OA\Property(
+     *                     property="gender",
+     *                     type="string",
+     *                 ),
      *             ),
-     *             @OA\Property(
-     *                 property="phone",
-     *                 type="string"
-     *             ),
-     *             @OA\Property(
-     *                 property="username",
-     *                 type="string"
-     *             ),
-     *             @OA\Property(
-     *                 property="directorate",
-     *                 type="integer",
-     *                 format="int64"
-     *             ),
-     *             @OA\Property(
-     *                 property="city",
-     *                 type="integer",
-     *                 format="int64"
-     *             ),
-     *             @OA\Property(
-     *                 property="password",
-     *                 type="string"
-     *             ),
-     *             @OA\Property(
-     *                 property="certificate",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="string"
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="courses",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="string"
-     *                 )
-     *             ),
-     *             @OA\Property(
-     *                 property="gender",
-     *                 type="string"
-     *             )
-     *         )
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -345,7 +351,8 @@ class UserController extends Controller
      *                 @OA\Property(
      *                     property="gender",
      *                     type="string",
-     *                     example="male"
+     *                     example="male",
+     *                      enum={"male","female"}
      *                 ),
      *                 @OA\Property(
      *                     property="certificate",
@@ -364,7 +371,7 @@ class UserController extends Controller
      *             )
      *         )
      *     ),
-     * security={{"bearerAuth": {}}}
+     *     security={{"bearerAuth": {}}}
      * )
      */
     public function store(Request $request)
@@ -394,7 +401,7 @@ class UserController extends Controller
                 'role_id' => 2,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
-                'certificate' => $request->certificate,
+                'certificate' => json_encode($request->certificate),
                 'courses' => json_encode($request->courses)
             ]);
             return response()->json([
@@ -470,37 +477,35 @@ class UserController extends Controller
      *     ),
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(
-     *                 property="name",
-     *                 type="string",
-     *                 example="John Doe"
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="name",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="username",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="directorate",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="city",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="phone",
+     *                     type="string",
+     *                 ),
      *             ),
-     *             @OA\Property(
-     *                 property="username",
-     *                 type="string",
-     *                 example="johndoe"
-     *             ),
-     *             @OA\Property(
-     *                 property="directorate",
-     *                 type="string",
-     *             ),
-     *             @OA\Property(
-     *                 property="city",
-     *                 type="string",
-     *                 example="New York"
-     *             ),
-     *             @OA\Property(
-     *                 property="password",
-     *                 type="string",
-     *                 example="newpassword"
-     *             ),
-     *             @OA\Property(
-     *                 property="phone",
-     *                 type="string",
-     *                 example="1234567890"
-     *             )
-     *         )
+     *         ),
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -514,9 +519,10 @@ class UserController extends Controller
      *             )
      *         )
      *     ),
-     * security={{"bearerAuth": {}}}
+     *     security={{"bearerAuth": {}}}
      * )
      */
+
     public function update(Request $request, User $user)
     {
 

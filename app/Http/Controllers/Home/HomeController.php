@@ -148,7 +148,7 @@ class HomeController extends Controller
     {
         $user = auth()->user();
         $UserController = app(UserController::class);
-        $users = $UserController->index();
+        $users = $UserController->index('user');
         return response()->json([
             'auth_user' => $user,
             'users' => $users->original['users']
