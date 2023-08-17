@@ -12,67 +12,67 @@ class SurveyAndriodController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-   /**
- * @OA\Get(
- *     path="/app/survey/index",
- *     summary="Show all available surveys for authenticated user",
- *     description="Send a request to fetch surveys",
- *     operationId="AppSurveyIndex",
- *     tags={"Android Application"},
- *     @OA\Response(
- *         response=200,
- *         description="Successfully retrieved surveys",
- *         @OA\JsonContent(
- *             type="object",
- *             @OA\Property(
- *                 property="surveys",
- *                 type="array",
- *                 @OA\Items(
- *                     type="object",
- *                     @OA\Property(
- *                         property="ar_name",
- *                         type="string"
- *                     ),
- *                     @OA\Property(
- *                         property="en_name",
- *                         type="string"
- *                     ),
- *                     @OA\Property(
- *                         property="color",
- *                         type="string"
- *                     ),
- *                     @OA\Property(
- *                         property="questions_count",
- *                         type="integer"
- *                     ),
- *                     @OA\Property(
- *                         property="start_date",
- *                         type="string",
- *                         format="date-time"
- *                     ),
- *                     @OA\Property(
- *                         property="end_date",
- *                         type="string",
- *                         format="date-time"
- *                     ),
- *                     @OA\Property(
- *                         property="status",
- *                         type="string"
- *                     ),
- *                     @OA\Property(
- *                         property="notes",
- *                         type="array",
- *                         @OA\Items(
- *                             type="string"
- *                         )
- *                     )
- *                 )
- *             )
- *         )
- *     ),
- *     security={{"bearerAuth": {}}}
- * )
- */
+    /**
+     * @OA\Get(
+     *     path="/app/survey/index",
+     *     summary="Show all available surveys for authenticated user",
+     *     description="Send a request to fetch surveys",
+     *     operationId="AppSurveyIndex",
+     *     tags={"Android Application"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully retrieved surveys",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="surveys",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(
+     *                         property="ar_name",
+     *                         type="string"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="en_name",
+     *                         type="string"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="color",
+     *                         type="string"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="questions_count",
+     *                         type="integer"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="start_date",
+     *                         type="string",
+     *                         format="date-time"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="end_date",
+     *                         type="string",
+     *                         format="date-time"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="status",
+     *                         type="string"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="notes",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="string"
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     security={{"bearerAuth": {}}}
+     * )
+     */
     public function index()
     {
         $user = auth()->user();
@@ -171,6 +171,12 @@ class SurveyAndriodController extends Controller
     public function show(Survey $survey)
     {
         $questions = $survey->getAllQuestions();
+        $questions->filter(function ($question) {
+            $question->setAttribute('main_title', $question->MainTitle->name);
+            $question->setAttribute('sub_title', $question->subTitle->name);
+            $question->options = json_decode($question->options);
+            return $question;
+        });
         return response()->json([
             'questions' => $questions
         ]);
