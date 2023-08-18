@@ -6,7 +6,10 @@
     },
     "servers": [
         {
-            "url": "center.lavetro-agency.com/api/documentation"
+            "url": "https://center.lavetro-agency.com/api"
+        },
+        {
+            "url": "https://center.lavetro-agency.com/api"
         }
     ],
     "paths": {
