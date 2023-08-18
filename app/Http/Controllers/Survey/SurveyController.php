@@ -19,70 +19,70 @@ class SurveyController extends Controller
     {
         $this->middleware('admin');
     }
-  /**
- * Retrieve surveys based on their status.
- *
- * @param string $status The status of the surveys ("archived" or "valid").
- * @return \Illuminate\Http\JsonResponse
- *
- * @OA\Get(
- *     path="/survey/index/{status}",
- *     operationId="getSurveysByStatus",
- *     summary="Get surveys by status",
- *     tags={"surveys"},
- *     @OA\Parameter(
- *         name="status",
- *         in="path",
- *         description="Status of the surveys",
- *         required=true,
- *         @OA\Schema(
- *             type="string",
- *             enum={"archived", "valid"},
- *         ),
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="Successful operation",
- *         @OA\JsonContent(
- *             @OA\Property(
- *                 property="surveys",
- *                 type="array",
- *                 @OA\Items(
- *                     @OA\Property(property="id", type="integer"),
- *                     @OA\Property(property="ar_name", type="string", nullable=true),
- *                     @OA\Property(property="en_name", type="string", nullable=true),
- *                     @OA\Property(property="color", type="string", nullable=true),
- *                     @OA\Property(property="start_date", type="string", format="date", nullable=true),
- *                     @OA\Property(property="end_date", type="string", format="date-time", nullable=true),
- *                     @OA\Property(property="questions_count", type="integer"),
- *                     @OA\Property(property="notes", type="string", nullable=true),
- *                     @OA\Property(property="status", type="string"),
- *                     @OA\Property(
- *                         property="users",
- *                         type="array",
- *                         @OA\Items(
- *                             @OA\Property(property="id", type="integer"),
- *                             @OA\Property(property="username", type="string"),
- *                             @OA\Property(property="name", type="string"),
- *                             @OA\Property(property="phone", type="string"),
- *                             @OA\Property(property="directorate_id", type="integer"),
- *                             @OA\Property(property="city_id", type="integer"),
- *                             @OA\Property(property="flag", type="string"),
- *                             @OA\Property(property="certificate", type="string", nullable=true),
- *                             @OA\Property(property="gender", type="string", enum={"male", "female"}),
- *                             @OA\Property(property="courses", type="array", @OA\Items(type="string"), nullable=true),
- *                         ),
- *                     ),
- *                 ),
- *             ),
- *         ),
- *     ),
- *     security={
+    /**
+     * Retrieve surveys based on their status.
+     *
+     * @param string $status The status of the surveys ("archived" or "valid").
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @OA\Get(
+     *     path="/survey/index/{status}",
+     *     operationId="getSurveysByStatus",
+     *     summary="Get surveys by status",
+     *     tags={"surveys"},
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="path",
+     *         description="Status of the surveys",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"archived", "valid"},
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="surveys",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="ar_name", type="string", nullable=true),
+     *                     @OA\Property(property="en_name", type="string", nullable=true),
+     *                     @OA\Property(property="color", type="string", nullable=true),
+     *                     @OA\Property(property="start_date", type="string", format="date", nullable=true),
+     *                     @OA\Property(property="end_date", type="string", format="date-time", nullable=true),
+     *                     @OA\Property(property="questions_count", type="integer"),
+     *                     @OA\Property(property="notes", type="string", nullable=true),
+     *                     @OA\Property(property="status", type="string"),
+     *                     @OA\Property(
+     *                         property="users",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="username", type="string"),
+     *                             @OA\Property(property="name", type="string"),
+     *                             @OA\Property(property="phone", type="string"),
+     *                             @OA\Property(property="directorate_id", type="integer"),
+     *                             @OA\Property(property="city_id", type="integer"),
+     *                             @OA\Property(property="flag", type="string"),
+     *                             @OA\Property(property="certificate", type="string", nullable=true),
+     *                             @OA\Property(property="gender", type="string", enum={"male", "female"}),
+     *                             @OA\Property(property="courses", type="array", @OA\Items(type="string"), nullable=true),
+     *                         ),
+     *                     ),
+     *                 ),
+     *             ),
+     *         ),
+     *     ),
+     *     security={
      *         {"bearerAuth": {}}
      *     }
- * 
- * )
- */
+     * 
+     * )
+     */
     public function index($status)
     {
         if ($status == "archived") {
@@ -93,11 +93,11 @@ class SurveyController extends Controller
         }
         $surveys->filter(function ($survey) {
             $survey->users->filter(function ($user) {
-                $user->courses = json_decode($user->courses); 
-                $user->makeHidden(['pivot','created_at','updated_at','role_id']);
+                $user->courses = json_decode($user->courses);
+                $user->makeHidden(['pivot', 'created_at', 'updated_at', 'role_id']);
                 return $user;
             });
-            $survey->makeHidden(['created_at','updated_at']);
+            $survey->makeHidden(['created_at', 'updated_at']);
             return $survey;
         });
         return response()->json([
@@ -315,6 +315,33 @@ class SurveyController extends Controller
             'message' => 'survey is duplicated successfully'
         ]);
     }
+    /**
+     * @OA\Put(
+     *     path="/survey/archive/{survey}",
+     *     summary="Archive a survey",
+     *     description="Archive a survey by setting its status to 'archived'.",
+     *     tags={"surveys"},
+     *     @OA\Parameter(
+     *         name="survey",
+     *         in="path",
+     *         description="ID of the survey to be archived",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Survey archived successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 description="Success message"
+     *             )
+     *         )
+     *     ),
+     *    security={{"bearerAuth": {}}}
+     * )
+     */
     public function archive(Survey $survey)
     {
         $survey->status = 'archived';

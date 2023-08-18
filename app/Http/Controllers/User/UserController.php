@@ -236,6 +236,7 @@ class UserController extends Controller
         $user->setAttribute('city_name', $city);
         $user->setAttribute('directorate_name', $directorate);
         $user->setAttribute('courses', json_decode($user->courses));
+        $user->setAttribute('certificate', json_decode($user->certificate));
         return response()->json([
             'user' => $user
         ]);
@@ -404,6 +405,8 @@ class UserController extends Controller
                 'certificate' => json_encode($request->certificate),
                 'courses' => json_encode($request->courses)
             ]);
+            $user->certificate = json_decode($user->certificate);
+            $user->courses = json_decode($user->courses);
             return response()->json([
                 'message' => 'the user is created successfully',
                 'user' => $user
