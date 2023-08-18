@@ -16,10 +16,12 @@ class AccountLockMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $username = $request->username ;
-        $user = User::where('username',$username)->first();
-        if($user->flag==1)
-            abort('401','UnAuthinticated');
+        $username = $request->username;
+        $user = User::where('username', $username)->first();
+        if ($user->flag == 1)
+            return response()->json([
+                'message' => 'your account is locked'
+            ], 401);
         return $next($request);
     }
 }

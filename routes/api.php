@@ -25,13 +25,14 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('accountlock');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 // this group is for users management
 Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::post('/user/store', [UserController::class, 'store']);
     Route::get('/user/index/{role}', [UserController::class, 'index']);
     Route::put('/user/stopaccount/{user}', [UserController::class, 'stopAccount']);
+    Route::put('/user/activAccount/{user}', [UserController::class, 'activeAccount']);
     Route::put('/user/changePassword', [ProfileController::class, 'editPassword']);
     Route::put('/user/update/{user}', [UserController::class, 'update']);
     Route::get('/user/show/{user}', [UserController::class, 'show']);
@@ -43,10 +44,10 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::get('/survey/index/{status}', [SurveyController::class, 'index']);
     Route::put('/survey/archive/{survey}', [SurveyController::class, 'archive']);
     Route::get('/survey/show/{survey}', [SurveyController::class, 'show']);
-    Route::post('/survey/duplicate/{survey}',[SurveyController::class,'duplicate']);
+    Route::post('/survey/duplicate/{survey}', [SurveyController::class, 'duplicate']);
     Route::get('/users/isanswer/{survey}', [SurveyController::class, 'getAnswersUser']);
-    Route::put('/survey/reuse/{survey}',[SurveyController::class,'reuse']);
-    Route::put('/survey/update/{survey}',[SurveyController::class,'update']);
+    Route::put('/survey/reuse/{survey}', [SurveyController::class, 'reuse']);
+    Route::put('/survey/update/{survey}', [SurveyController::class, 'update']);
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -62,7 +63,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 Route::group([], function () {
     Route::get('/app/survey/index', [SurveyAndriodController::class, 'index']);
-    Route::get('/app/survey/show/{survey}',[SurveyAndriodController::class,'show']);
+    Route::get('/app/survey/show/{survey}', [SurveyAndriodController::class, 'show']);
 });
 Route::get('/test', function () {
     $survey =  App\Models\Survey::find(1);

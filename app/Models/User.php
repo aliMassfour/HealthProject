@@ -27,7 +27,8 @@ class User extends Authenticatable
         'phone',
         'gender',
         'certificate',
-        'courses'
+        'courses',
+        'evaluation'
     ];
 
     /**

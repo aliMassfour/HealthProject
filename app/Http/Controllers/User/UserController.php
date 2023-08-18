@@ -299,6 +299,15 @@ class UserController extends Controller
      *                     property="gender",
      *                     type="string",
      *                 ),
+     *                 @OA\Property(
+     *                     property="evaluation",
+     *                     type="string",
+     *                     enum={"excellent", "very good", "good"},
+     *                 ),
+     *                 @OA\Property(
+     *                     property="type",
+     *                     type="string",
+     *                 ),
      *             ),
      *         ),
      *     ),
@@ -354,7 +363,7 @@ class UserController extends Controller
      *                     property="gender",
      *                     type="string",
      *                     example="male",
-     *                      enum={"male","female"}
+     *                     enum={"male", "female"}
      *                 ),
      *                 @OA\Property(
      *                     property="certificate",
@@ -369,7 +378,17 @@ class UserController extends Controller
      *                     @OA\Items(
      *                         type="string"
      *                     )
-     *                 )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="evaluation",
+     *                     type="string",
+     *                     example="excellent",
+     *                     enum={"excellent", "very good", "good"},
+     *                 ),
+     *                 @OA\Property(
+     *                     property="type",
+     *                     type="string",
+     *                 ),
      *             )
      *         )
      *     ),
@@ -379,6 +398,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //validate
+        return $request->all();
         $this->validate($request, [
             'name' => 'required',
             'phone' => 'required',
@@ -389,8 +409,9 @@ class UserController extends Controller
             'phone' => 'required',
             'certificate' => 'required',
             'courses' => 'required|array',
-            'gender' => 'required'
-
+            'gender' => 'required',
+            'type' => 'string|required',
+            'evaluation' => 'required|string'
         ]);
         try {
             //create new user
@@ -403,8 +424,9 @@ class UserController extends Controller
                 'role_id' => 2,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
-                'certificate' => json_encode($request->certificate),
-                'courses' => json_encode($request->courses)
+                'certificate' => $request->type == 'volunteer' ? json_encode($request->certificate) : null,
+                'courses' => $request->type == 'volunteer' ? json_encode($request->courses) : null,
+                'evaluation' => $request->evaluation
             ]);
             $user->certificate = json_decode($user->certificate);
             $user->courses = json_decode($user->courses);
@@ -482,7 +504,7 @@ class UserController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\MediaType(
-     *             mediaType="multipart/form-data",
+     *             mediaType="application/json",
      *             @OA\Schema(
      *                 @OA\Property(
      *                     property="name",
@@ -508,6 +530,25 @@ class UserController extends Controller
      *                     property="phone",
      *                     type="string",
      *                 ),
+     *                 @OA\Property(
+     *                     property="evaluation",
+     *                     type="string",
+     *                     enum={"excellent", "very good", "good"}
+     *                 ),
+     *                 @OA\Property(
+     *                     property="certificate",
+     *                     type="array",
+     *                      @OA\Items(
+     *                         type="string"
+     *                     )
+     *                 ),
+     *                 @OA\Property(
+     *                     property="courses",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="string"
+     *                     )
+     *                 ),
      *             ),
      *         ),
      *     ),
@@ -529,7 +570,6 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-
         try {
             $this->validate($request, [
                 'name' => 'required',
@@ -538,6 +578,9 @@ class UserController extends Controller
                 'city' => 'required',
                 'password' => 'required|min:4|max:8',
                 'phone' => 'required',
+                'evaluation' => 'required|in:excellent,very good,good',
+                'certificate' => 'required|array',
+                'courses' => 'required|array'
             ]);
             $user->update([
                 'name' => $request->name,
@@ -545,7 +588,8 @@ class UserController extends Controller
                 'directorate' => $request->directorate,
                 'city' => $request->city,
                 'password' => Hash::make($request->password),
-                'phone' => $request->phone
+                'phone' => $request->phone,
+                'evaluation' => $request->evaluation
             ]);
             return response()->json([
                 'message' => 'users information updated successfully'
@@ -555,5 +599,44 @@ class UserController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+    /**
+     * @OA\Put(
+     *     path="/user/activAccount/{user}",
+     *     tags={"Users"},
+     *     summary="Activate user account",
+     *     description="Activates the account of a specific user.",
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         description="The ID of the user",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="user account activated successfully"
+     *             )
+     *         )
+     *     ),
+     *     security={{"bearerAuth": {}}}
+     * )
+     */
+    public function activeAccount(User $user)
+    {
+        $user->flag = '0';
+        $user->save();
+        return response()->json([
+            'message' => 'user account activated successfully'
+        ]);
     }
 }

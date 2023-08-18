@@ -73,6 +73,8 @@ class SurveyController extends Controller
      *                             @OA\Property(property="courses", type="array", @OA\Items(type="string"), nullable=true),
      *                         ),
      *                     ),
+     *                     @OA\Property(property="total_days", type="integer"),
+     *                     @OA\Property(property="remaining_days", type="integer"),
      *                 ),
      *             ),
      *         ),
@@ -97,6 +99,13 @@ class SurveyController extends Controller
                 $user->makeHidden(['pivot', 'created_at', 'updated_at', 'role_id']);
                 return $user;
             });
+            $end = Carbon::parse($survey->ende_date);
+            $start = CArbon::parse($survey->satr_date);
+            $total_days = $end->diff($start);
+            $remaining_days = $end->diff(now());
+
+            $survey->setAttribute('total_days', $total_days->days);
+            $survey->setAttribute('remaining_days', $remaining_days->days);
             $survey->makeHidden(['created_at', 'updated_at']);
             return $survey;
         });
@@ -104,7 +113,6 @@ class SurveyController extends Controller
             'surveys' => $surveys
         ]);
     }
-
     /**
      * Store a new survey.
      *

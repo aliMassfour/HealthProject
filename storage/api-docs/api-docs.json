@@ -6,7 +6,7 @@
     },
     "servers": [
         {
-            "url": "https://center.lavetro-agency.com/api"
+            "url": "http://127.0.0.1:8000/api"
         },
         {
             "url": "https://center.lavetro-agency.com/api"
@@ -667,6 +667,12 @@
                                                             },
                                                             "type": "object"
                                                         }
+                                                    },
+                                                    "total_days": {
+                                                        "type": "integer"
+                                                    },
+                                                    "remaining_days": {
+                                                        "type": "integer"
                                                     }
                                                 },
                                                 "type": "object"
@@ -1480,6 +1486,17 @@
                                     },
                                     "gender": {
                                         "type": "string"
+                                    },
+                                    "evaluation": {
+                                        "type": "string",
+                                        "enum": [
+                                            "excellent",
+                                            "very good",
+                                            "good"
+                                        ]
+                                    },
+                                    "type": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -1547,6 +1564,18 @@
                                                     "items": {
                                                         "type": "string"
                                                     }
+                                                },
+                                                "evaluation": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "excellent",
+                                                        "very good",
+                                                        "good"
+                                                    ],
+                                                    "example": "excellent"
+                                                },
+                                                "type": {
+                                                    "type": "string"
                                                 }
                                             },
                                             "type": "object"
@@ -1633,7 +1662,7 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "properties": {
                                     "name": {
@@ -1653,6 +1682,26 @@
                                     },
                                     "phone": {
                                         "type": "string"
+                                    },
+                                    "evaluation": {
+                                        "type": "string",
+                                        "enum": [
+                                            "excellent",
+                                            "very good",
+                                            "good"
+                                        ]
+                                    },
+                                    "certificate": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "courses": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1670,6 +1719,51 @@
                                         "message": {
                                             "type": "string",
                                             "example": "users information updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/user/activAccount/{user}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Activate user account",
+                "description": "Activates the account of a specific user.",
+                "operationId": "57c508c056037b2357817c77c3ba7ad4",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "The ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "user account activated successfully"
                                         }
                                     },
                                     "type": "object"
