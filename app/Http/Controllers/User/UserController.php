@@ -131,6 +131,7 @@ class UserController extends Controller
             $user->setAttribute('directorate_name', $user->directorate->name);
             $user->makeHidden(['directorate', 'city', 'created_at', 'updated_at']);
             $user->courses = json_decode($user->courses);
+            $user->certificate = json_decode($user->certificate);
             return $user;
         });
         return response()->json([
