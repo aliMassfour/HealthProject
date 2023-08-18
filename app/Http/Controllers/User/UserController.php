@@ -421,7 +421,7 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 'city_id' => $request->city,
                 'directorate_id' => $request->directorate,
-                'role_id' => 2,
+                'role_id' => $request->type=='admin' ? 1 : 2,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
                 'certificate' => $request->type == 'volunteer' ? json_encode($request->certificate) : null,
