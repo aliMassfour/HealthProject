@@ -13,7 +13,7 @@ use Illuminate\Routing\Controller as BaseController;
  * )
  * @OA\Server(
  *    url="http://127.0.0.1:8000/api",
- *     url = "center.lavetro-agency.com/api/documentation"
+ *     url = "https://center.lavetro-agency.com/api"
  * )
  * @OA\SecurityScheme(
  *    securityScheme="bearerAuth",
