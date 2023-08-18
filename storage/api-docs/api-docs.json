@@ -549,6 +549,140 @@
                 ]
             }
         },
+        "/survey/index/{status}": {
+            "get": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Get surveys by status",
+                "description": "Retrieve surveys based on their status.",
+                "operationId": "getSurveysByStatus",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "path",
+                        "description": "Status of the surveys",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "archived",
+                                "valid"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "surveys": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "ar_name": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "en_name": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "color": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "start_date": {
+                                                        "type": "string",
+                                                        "format": "date",
+                                                        "nullable": true
+                                                    },
+                                                    "end_date": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "questions_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "notes": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "users": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "username": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "phone": {
+                                                                    "type": "string"
+                                                                },
+                                                                "directorate_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "city_id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "flag": {
+                                                                    "type": "string"
+                                                                },
+                                                                "certificate": {
+                                                                    "type": "string",
+                                                                    "nullable": true
+                                                                },
+                                                                "gender": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "male",
+                                                                        "female"
+                                                                    ]
+                                                                },
+                                                                "courses": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "nullable": true
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/survey/store": {
             "post": {
                 "tags": [
