@@ -7,6 +7,8 @@ use App\Http\Controllers\Notification\NotificationController;
 use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Survey\SurveyAndriodController;
 use App\Http\Controllers\Survey\SurveyController;
+use App\Http\Controllers\Title\MainTitleController;
+use App\Http\Controllers\Title\SubTitleController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +63,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 // this group for home page
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/home', [HomeController::class, 'dashboard']);
+});
+Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
+    Route::post('/maintitle', [MainTitleController::class, 'store']);
+    Route::get('/maintitle', [MainTitleController::class, 'index']);
+    Route::get('/subtitle', [SubTitleController::class, 'index']);
+    Route::post('/subtitle/{main_title}', [SubTitleController::class, 'store']);
 });
 Route::group([], function () {
     Route::get('/app/survey/index', [SurveyAndriodController::class, 'index']);

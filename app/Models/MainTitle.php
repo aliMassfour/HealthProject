@@ -8,20 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class MainTitle extends Model
 {
     use HasFactory;
-    protected $fillable =[
-        'survey_id' ,
+    protected $fillable = [
         'name'
     ];
     public function survey()
     {
-        return $this->belongsTo(Survey::class,'survey_id','id');
+        return $this->belongsToMany(Survey::class, 'SurveyMain', 'survey', 'main_title', 'id', 'id');
     }
     public function SubTitles()
     {
-        return $this->hasMany(SubTitle::class,'main_title','id');
+        return $this->hasMany(SubTitle::class, 'main_title', 'id');
     }
     public function questions()
     {
-        return $this->hasMany(Question::class,'main_title','id');
+        return $this->hasMany(Question::class, 'main_title', 'id');
     }
 }

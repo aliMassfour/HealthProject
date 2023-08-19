@@ -36,7 +36,7 @@ class Survey extends Model
     }
     public function MainTitles()
     {
-        return $this->hasMany(MainTitle::class, 'survey_id', 'id');
+        return $this->belongsToMany(MainTitle::class, 'SurveyMain', 'survey', 'main_title', 'id', 'id');
     }
     public function getAllQuestions()
     {

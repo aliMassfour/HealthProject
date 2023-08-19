@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Question\QuestionController;
 use App\Http\Controllers\SectionController;
 use App\Models\MainTitle;
+use App\Models\Question;
 use App\Models\Survey;
 use Carbon\Carbon;
 use Exception;
+use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use PhpParser\Node\Expr\Cast\Object_;
@@ -114,17 +116,10 @@ class SurveyController extends Controller
         ]);
     }
     /**
-     * Store a new survey.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     *
-     * @throws \Exception
-     *
      * @OA\Post(
      *     path="/survey/store",
      *     summary="Store a new survey",
-     *     description="Please ensure to send the questions in the same order as they were created.options and main_title and sub_title must be null if the question donst have it ",
+     *     description="Please ensure to send the questions in the same order as they were created. Options, main_title, and sub_title must be null if the question doesn't have them.",
      *     tags={"surveys"},
      *     @OA\RequestBody(
      *         required=true,
@@ -151,14 +146,14 @@ class SurveyController extends Controller
      *                     @OA\Property(
      *                         property="main_title",
      *                         oneOf={
-     *                             @OA\Schema(type="string"),
+     *                             @OA\Schema(type="integer"),
      *                             @OA\Schema(type="null")
      *                         }
      *                     ),
      *                     @OA\Property(
      *                         property="sub_title",
      *                         oneOf={
-     *                             @OA\Schema(type="string"),
+     *                             @OA\Schema(type="integer"),
      *                             @OA\Schema(type="null")
      *                         }
      *                     )
@@ -191,9 +186,8 @@ class SurveyController extends Controller
                 'end_date' => 'required|date',
                 'questions' => 'required|array',
                 'questions_count' => 'required'
-
             ]);
-            // return $request->all();
+
             $survey = Survey::create([
                 'ar_name' => $request->ar_name,
                 'en_name' => $request->en_name,
@@ -203,36 +197,39 @@ class SurveyController extends Controller
                 'questions_count' => $request->questions_count,
                 'notes' => $request->has('notes') ? $request->notes : null
             ]);
+
             $survey->users()->attach($request->volunteer);
-            // the create question is in QuestionControler so i call it from instance with app
-            $questionsController = app(QuestionController::class);
-            $questions = $request->questions;
+
             $main_titles = [];
-            $sub_titles = [];
-            foreach ($questions as &$question) {
-                if ($question['main_title'] != null && !in_array($question['main_title'], $main_titles)) {
-                    $main_title = $survey->MainTitles()->create([
-                        'name' => $question['main_title']
-                    ]);
+            $data_questions = [];
+            $question_controller = app(QuestionController::class);
+
+            foreach ($request->questions as $question) {
+                if (!in_array($question['main_title'], $main_titles) && $question['main_title'] !== null) {
                     $main_titles[] = $question['main_title'];
-                    $question['main_title'] = $main_title->id;
                 }
-                if ($question['sub_title'] != null && !in_array($question['sub_title'], $sub_titles)) {
-                    $sub_title = $main_title->SubTitles()->create([
-                        'name' => $question['sub_title']
-                    ]);
-                    $sub_titles[] = $question['sub_title'];
-                    $question['sub_title'] = $sub_title->id;
-                    $question['main_title'] = $main_title->id;
+                $data_question = [
+                    'content' => $question['content'],
+                    'type' => $question['type'],
+                    'survey_id' => $survey->id,
+                    'required' => $question['required'] == true ? "1" : "0",
+                    'main_title' => $question['main_title'],
+                    'sub_title' => $question['sub_title']
+                ];
+                if (array_key_exists('options', $question)) {
+                    $data_question['options'] = $question['options'];
                 }
-                $question['survey_id'] = $survey->id;
+                $data_questions[] = $data_question;
             }
-            $questionsController->store($questions);
+
+            $question_controller->store($data_questions);
+            $survey->MainTitles()->attach($main_titles);
+
             return response()->json([
-                'message' => 'survey is created successfully '
+                'message' => 'Survey created successfully'
             ]);
         } catch (Exception $e) {
-            return $e->getMessage();
+            return $e;
         }
     }
     /**
@@ -273,54 +270,14 @@ class SurveyController extends Controller
         $new_survey = Survey::create([
             'questions_count' => $questions_count
         ]);
-        // we need to create the survey information from questions and main titles and subtitles 
-        // we know that every questions maybe belongs to sub title and main title 
-        // and also many questions maybe have the same main_title or the same subtitle 
-        // by the main title or the sub title must created once so for that i use this arrays to 
-        // store the main an sub titles that i created  
-        $main_titles = [];
-        $sub_titles = [];
-        $main_title = null;
-        $sub_title = null;
-        $new_questions = [];
-        foreach ($questions as $question) {
-            $new_question = [
-                'content' => $question->content,
-                'survey_id' => $new_survey->id,
-                'type' => $question->type,
-                'required' => $question->required
-            ];
-            if ($question->options !== null)
-                $new_question['options'] = json_decode($question->options);
-            if ($question->main_title !== null) {
-                if (!in_array($question->MainTitle->name, $main_titles)) {
-                    $main_title = $new_survey->MainTitles()->create([
-                        'name' => $question->MainTitle->name
-                    ]);
-                    $main_titles[] = $question->MainTitle->name;
-                }
-                $new_question['main_title'] = $main_title->id;
-            } else {
-                $new_question['main_title'] = null;
-            }
 
-            if ($question->sub_title !== null) {
-                if (!in_array($question->SubTitle->name, $sub_titles)) {
-                    $sub_title = $main_title->SubTitles()->create([
-                        'name' => $question->SubTitle->name
-                    ]);
-                    $sub_titles[] = $question->SubTitle->name;
-                }
-                $new_question['sub_title'] = $sub_title->id;
-            } else {
-                $new_question['sub_title'] = null;
-            }
-            $new_questions[] = $new_question;
+        foreach ($questions as $question) {
+            $question->survey_id = $survey->id;
+            Question::query()->create($question);
         }
-        $QuestionController = app(QuestionController::class);
-        $QuestionController->store($new_questions);
+        
         return response()->json([
-            'message' => 'survey is duplicated successfully'
+            'duplicated the survey successfully'
         ]);
     }
     /**
@@ -396,10 +353,6 @@ class SurveyController extends Controller
      *             ))
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Survey not found"
-     *     ),
      *     security={
      *         {"bearerAuth": {}}
      *     }
@@ -410,8 +363,8 @@ class SurveyController extends Controller
     {
         $questions = $survey->getAllQuestions();
         $filter_questions =  $questions->filter(function ($question) {
-            $question->main_title !== null ? $question->setAttribute('main_title_name', $question->MainTitle->name) :  $question->setAttribute('main_title_name', null);
-            $question->sub_title !== null ? $question->setAttribute('sub_title_name', $question->SubTitle->name) : $question->setAttribute('sub_title_name', null);
+            $question->main_title !== null ? $question->setAttribute('main_title', $question->MainTitle) :  $question->setAttribute('main_title_name', null);
+            $question->sub_title !== null ? $question->setAttribute('sub_title', $question->SubTitle) : $question->setAttribute('sub_title_name', null);
             $question->makeHidden('main_title');
             return $question;
         });
@@ -680,30 +633,5 @@ class SurveyController extends Controller
         return response()->json([
             'message' => 'This survey is active.'
         ]);
-    }
-    public function AddMainTitle(Request $request, Survey $survey)
-    {
-        $this->validate($request, [
-            'main_title' => 'requreid|string',
-            'questions' => 'required|array'
-        ]);
-        $main_title_name = $request->main_title;
-        $main_title = $survey->MainTitles()->create([
-            'name' => $main_title_name
-        ]);
-        $questions = $request->get('questions');
-        $questions->each(function (&$question) use ($survey, $main_title) {
-            $question->setAttribute('survey_id', $survey->id);
-            $question->setAttribute('main_title', $main_title->id);
-        });
-    }
-    public function Titles(survey $survey)
-    {
-        $titles = $survey->MainTitles()->with('subTitles')->get(['id', 'name']);
-        return response()->json(
-            [
-                'titles' => $titles
-            ]
-        );
     }
 }

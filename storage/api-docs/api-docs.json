@@ -698,7 +698,7 @@
                     "surveys"
                 ],
                 "summary": "Store a new survey",
-                "description": "Please ensure to send the questions in the same order as they were created.options and main_title and sub_title must be null if the question donst have it ",
+                "description": "Please ensure to send the questions in the same order as they were created. Options, main_title, and sub_title must be null if the question doesn't have them.",
                 "operationId": "79dc685ecd46fb4b4947cee4af95c4de",
                 "requestBody": {
                     "required": true,
@@ -758,7 +758,7 @@
                                                 "main_title": {
                                                     "oneOf": [
                                                         {
-                                                            "type": "string"
+                                                            "type": "integer"
                                                         },
                                                         {
                                                             "type": "null"
@@ -768,7 +768,7 @@
                                                 "sub_title": {
                                                     "oneOf": [
                                                         {
-                                                            "type": "string"
+                                                            "type": "integer"
                                                         },
                                                         {
                                                             "type": "null"
@@ -1207,6 +1207,244 @@
                                         "message": {
                                             "description": "Success message",
                                             "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/maintitle": {
+            "get": {
+                "tags": [
+                    "Main Title"
+                ],
+                "summary": "Get all main titles",
+                "description": "Endpoint to retrieve all main titles",
+                "operationId": "101bf6bbe94ba9e2a38af3c1e8b9f8fd",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "main_titles": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Example Title"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2023-08-19T12:34:56Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2023-08-19T12:34:56Z"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Main Title"
+                ],
+                "summary": "Create a new main title",
+                "description": "Endpoint to create a new main title",
+                "operationId": "201ae67d3dd8668dd43a2394db527251",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Example Title"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Main title created successfully"
+                                        },
+                                        "main_title": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/subtitle": {
+            "get": {
+                "tags": [
+                    "Sub Title"
+                ],
+                "summary": "Get all sub titles",
+                "description": "Endpoint to retrieve all sub titles",
+                "operationId": "fd02d382f0cfd6d29c1c1d893147253c",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "sub_titles": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/subtitle/{main_title}": {
+            "post": {
+                "tags": [
+                    "Sub Title"
+                ],
+                "summary": "Create a new sub title",
+                "description": "Endpoint to create a new sub title under a main title",
+                "operationId": "3f531e39f4e043816ec73b1522b332cf",
+                "parameters": [
+                    {
+                        "name": "main_title",
+                        "in": "path",
+                        "description": "ID of the main title",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Example Sub Title"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sub title created successfully"
+                                        },
+                                        "sub_title": {
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     },
                                     "type": "object"

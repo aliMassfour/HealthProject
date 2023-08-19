@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Question extends Model
 {
     use HasFactory;
-    protected $filable=[
+    protected $fillable=[
         'survey_id' ,
         'section_id' ,
         'content' ,
