@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::get('/users/isanswer/{survey}', [SurveyController::class, 'getAnswersUser']);
     Route::put('/survey/reuse/{survey}', [SurveyController::class, 'reuse']);
     Route::put('/survey/update/{survey}', [SurveyController::class, 'update']);
+    Route::get('/survey/titles/{survey}', [SurveyController::class, 'Titles']);
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

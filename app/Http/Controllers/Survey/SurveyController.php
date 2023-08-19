@@ -697,4 +697,13 @@ class SurveyController extends Controller
             $question->setAttribute('main_title', $main_title->id);
         });
     }
+    public function Titles(survey $survey)
+    {
+        $titles = $survey->MainTitles()->with('subTitles')->get(['id', 'name']);
+        return response()->json(
+            [
+                'titles' => $titles
+            ]
+        );
+    }
 }
