@@ -20,16 +20,14 @@ class QuestionController extends Controller
                 'survey_id' => 'required',
                 'content' => 'required',
                 'type' => 'required',
-                'options' => 'array',
+                'options' => 'array||nullable',
                 'required' => 'required'
             ]);
             if ($validator->fails()) {
                 throw new ValidationException($validator->getMessageBag());
             } else {
-                if (isset($question['options'])) { 
+                if ($question['options'] !== null) {
                     $question['options'] = json_encode($question['options']);
-                } else {
-                    $question = array_merge($question, ['options' => null]);
                 }
                 $validateData[] = $question;
             }

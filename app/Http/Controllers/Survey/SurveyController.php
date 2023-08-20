@@ -217,11 +217,13 @@ class SurveyController extends Controller
                     'required' => $question['required'] == true ? "1" : "0",
                     'main_title' => $question['main_title'],
                     'sub_title' => $question['sub_title'],
-                    'en_content' => $question['en_content'] ,
+                    'en_content' => $question['en_content'],
                     'length' => $question['length']
                 ];
-                if (array_key_exists('options', $question)) {
+                if ($question['options'] !== null) {
                     $data_question['options'] = $question['options'];
+                } else {
+                    $data_question['options'] = null;
                 }
                 $data_questions[] = $data_question;
             }
@@ -279,7 +281,7 @@ class SurveyController extends Controller
             $question->survey_id = $survey->id;
             Question::query()->create($question);
         }
-        
+
         return response()->json([
             'duplicated the survey successfully'
         ]);
