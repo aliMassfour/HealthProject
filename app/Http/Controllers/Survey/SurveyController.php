@@ -367,11 +367,10 @@ class SurveyController extends Controller
 
     public function show(Survey $survey)
     {
-        $questions = $survey->getAllQuestions();
+        $questions = $survey->questions;
         $filter_questions =  $questions->filter(function ($question) {
             $question->main_title !== null ? $question->setAttribute('main_title', $question->MainTitle) :  $question->setAttribute('main_title_name', null);
             $question->sub_title !== null ? $question->setAttribute('sub_title', $question->SubTitle) : $question->setAttribute('sub_title_name', null);
-            $question->makeHidden('main_title');
             return $question;
         });
         return response()->json([
