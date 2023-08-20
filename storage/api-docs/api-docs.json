@@ -965,9 +965,6 @@
                                 }
                             }
                         }
-                    },
-                    "404": {
-                        "description": "Survey not found"
                     }
                 },
                 "security": [
@@ -1336,14 +1333,25 @@
                 ]
             }
         },
-        "/subtitle": {
+        "/subtitle/{main_title}": {
             "get": {
                 "tags": [
                     "Sub Title"
                 ],
                 "summary": "Get all sub titles",
                 "description": "Endpoint to retrieve all sub titles",
-                "operationId": "fd02d382f0cfd6d29c1c1d893147253c",
+                "operationId": "a2e465ad08be20016172f17a6af88ff3",
+                "parameters": [
+                    {
+                        "name": "main_title",
+                        "in": "path",
+                        "description": "ID of the main title",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation",
@@ -1355,6 +1363,9 @@
                                             "type": "array",
                                             "items": {
                                                 "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
                                                     "name": {
                                                         "type": "string"
                                                     },
@@ -1382,9 +1393,7 @@
                         "bearerAuth": []
                     }
                 ]
-            }
-        },
-        "/subtitle/{main_title}": {
+            },
             "post": {
                 "tags": [
                     "Sub Title"

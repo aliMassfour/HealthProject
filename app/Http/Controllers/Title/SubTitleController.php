@@ -11,16 +11,24 @@ class SubTitleController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/subtitle",
+     *     path="/subtitle/{main_title}",
      *     summary="Get all sub titles",
      *     description="Endpoint to retrieve all sub titles",
      *     tags={"Sub Title"},
+     *       @OA\Parameter(
+     *         name="main_title",
+     *         in="path",
+     *         description="ID of the main title",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(
      *             @OA\Property(property="sub_titles", type="array",
      *                 @OA\Items(
+     *                     @OA\Property(property="id", type="int"),
      *                     @OA\Property(property="name", type="string"),
      *                     @OA\Property(property="created_at", type="string", format="date-time"),
      *                     @OA\Property(property="updated_at", type="string", format="date-time")
@@ -33,9 +41,9 @@ class SubTitleController extends Controller
      *     }
      * )
      */
-    public function index()
+    public function index(MainTitle $main_title)
     {
-        $sub_titles = SubTitle::all();
+        $sub_titles = $main_title->SubTitles;
         return response()->json([
             'sub_titles' => $sub_titles
         ]);

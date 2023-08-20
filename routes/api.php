@@ -67,7 +67,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 Route::group(['middleware' => ['auth:sanctum', 'admin']], function () {
     Route::post('/maintitle', [MainTitleController::class, 'store']);
     Route::get('/maintitle', [MainTitleController::class, 'index']);
-    Route::get('/subtitle', [SubTitleController::class, 'index']);
+    Route::get('/subtitle/{main_title}', [SubTitleController::class, 'index']);
     Route::post('/subtitle/{main_title}', [SubTitleController::class, 'store']);
 });
 Route::group([], function () {
