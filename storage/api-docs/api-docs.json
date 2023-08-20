@@ -736,6 +736,12 @@
                                                 "content": {
                                                     "type": "string"
                                                 },
+                                                "en_content": {
+                                                    "type": "string"
+                                                },
+                                                "length": {
+                                                    "type": "integer"
+                                                },
                                                 "type": {
                                                     "type": "string"
                                                 },

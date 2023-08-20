@@ -134,6 +134,8 @@ class SurveyController extends Controller
      *                 @OA\Property(property="end_date", type="string", format="date"),
      *                 @OA\Property(property="questions", type="array", @OA\Items(
      *                     @OA\Property(property="content", type="string"),
+     *                       @OA\Property(property="en_content", type="string"),
+     *                       @OA\Property(property="length", type="integer"),
      *                     @OA\Property(property="type", type="string"),
      *                     @OA\Property(
      *                         property="options",
@@ -214,7 +216,9 @@ class SurveyController extends Controller
                     'survey_id' => $survey->id,
                     'required' => $question['required'] == true ? "1" : "0",
                     'main_title' => $question['main_title'],
-                    'sub_title' => $question['sub_title']
+                    'sub_title' => $question['sub_title'],
+                    'en_content' => $question['en_content'] ,
+                    'length' => $question['length']
                 ];
                 if (array_key_exists('options', $question)) {
                     $data_question['options'] = $question['options'];

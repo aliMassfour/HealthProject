@@ -16,7 +16,9 @@ class Question extends Model
         'options' ,
         'required',
         'main_title' ,
-        'sub_title'
+        'sub_title',
+        'length' ,
+        'en_content'
     ];
     public function survey()
     {
