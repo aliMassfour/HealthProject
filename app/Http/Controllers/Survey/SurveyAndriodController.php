@@ -56,6 +56,10 @@ class SurveyAndriodController extends Controller
      *                         type="string",
      *                         format="date-time"
      *                     ),
+     *                       @OA\Property(
+     *                         property="remaining_days",
+     *                         type="integer",
+     *                     ),
      *                     @OA\Property(
      *                         property="status",
      *                         type="string"

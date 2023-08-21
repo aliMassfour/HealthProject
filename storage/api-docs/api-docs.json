@@ -447,6 +447,9 @@
                                                         "type": "string",
                                                         "format": "date-time"
                                                     },
+                                                    "remaining_days": {
+                                                        "type": "integer"
+                                                    },
                                                     "status": {
                                                         "type": "string"
                                                     },
