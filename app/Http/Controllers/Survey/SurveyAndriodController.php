@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Survey;
 
 use App\Http\Controllers\Controller;
 use App\Models\Survey;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SurveyAndriodController extends Controller
@@ -76,7 +77,6 @@ class SurveyAndriodController extends Controller
     public function index()
     {
         $user = auth()->user();
-
         $surveys = Survey::where('status', 'valid')
             ->with('users', 'entries')
             ->whereHas('users', function ($query) use ($user) {
@@ -91,6 +91,13 @@ class SurveyAndriodController extends Controller
                 return $survey->created_at->format('Y-M-D');
             });
         $surveys->makeHidden(['entries', 'pivot', 'users']);
+        foreach ($surveys as $deate_group) {
+            foreach ($deate_group as &$survey) {
+                $end = Carbon::parse($survey->end_date);
+                $remaining_days = $end->diff(now())->days;
+                $survey->setAttribute('remaining_days', $remaining_days);
+            }
+        }
         return response()->json([
             'surveys' => $surveys
         ]);
