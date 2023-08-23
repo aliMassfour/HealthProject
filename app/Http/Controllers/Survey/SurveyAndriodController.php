@@ -183,8 +183,10 @@ class SurveyAndriodController extends Controller
     {
         $questions = $survey->getAllQuestions();
         $questions->filter(function ($question) {
-            $question->setAttribute('main_title', $question->MainTitle->name);
-            $question->setAttribute('sub_title', $question->subTitle->name);
+            $main_title_name = $question->MainTile !== null ?  $question->MainTitle->name : null;
+            $sub_title_name = $question->SubTitle !== null ? $question->SubTitle->name : null;
+            $question->setAttribute('main_title',$main_title_name);
+            $question->setAttribute('sub_title', $sub_title_name);
             $question->options = json_decode($question->options);
             return $question;
         });
