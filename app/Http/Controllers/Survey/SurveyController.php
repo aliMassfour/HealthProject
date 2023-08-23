@@ -7,6 +7,7 @@ use App\Http\Controllers\Question\QuestionController;
 use App\Http\Controllers\SectionController;
 use App\Models\MainTitle;
 use App\Models\Question;
+use App\Models\SubTitle;
 use App\Models\Survey;
 use Carbon\Carbon;
 use Exception;
@@ -138,7 +139,14 @@ class SurveyController extends Controller
      *                       @OA\Property(property="length", type="integer"),
      *                     @OA\Property(property="type", type="string"),
      *                     @OA\Property(
-     *                         property="options",
+     *                         property="ar_options",
+     *                         oneOf={
+     *                             @OA\Schema(type="array", @OA\Items(type="string")),
+     *                             @OA\Schema(type="null")
+     *                         }
+     *                     ),
+     *                      @OA\Property(
+     *                         property="en_options",
      *                         oneOf={
      *                             @OA\Schema(type="array", @OA\Items(type="string")),
      *                             @OA\Schema(type="null")
@@ -178,6 +186,7 @@ class SurveyController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
             $this->validate($request, [
                 'ar_name' => 'required',
@@ -220,8 +229,13 @@ class SurveyController extends Controller
                     'en_content' => $question['en_content'],
                     'length' => $question['length']
                 ];
-                if ($question['options'] !== null) {
-                    $data_question['options'] = $question['options'];
+                if ($question['ar_options'] !== null) {
+                    $options = [];
+                    for ($i = 0; $i < sizeOf($question['ar_options']); $i++) {
+                        $options[] = $question['ar_options'][$i];
+                        $options[] = $question['en_options'][$i];
+                    }
+                    $data_question['options'] = $options;
                 } else {
                     $data_question['options'] = null;
                 }
@@ -235,6 +249,7 @@ class SurveyController extends Controller
                 'message' => 'Survey created successfully'
             ]);
         } catch (Exception $e) {
+            $survey->delete();
             return $e;
         }
     }
@@ -637,6 +652,138 @@ class SurveyController extends Controller
         $survey->save();
         return response()->json([
             'message' => 'This survey is active.'
+        ]);
+    }
+    /**
+     * @OA\Post(
+     *     path="/survey/details",
+     *     tags={"surveys"},
+     *     summary="Sort survey details",
+     *     description="Sorts the survey details based on main titles and sub titles.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Request body",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="ar_name", type="string", example="الاستبيان الاول"),
+     *             @OA\Property(property="en_name", type="string", example="first survey"),
+     *             @OA\Property(property="color", type="string", example="#0ffff"),
+     *             @OA\Property(property="volunteer", type="array", @OA\Items(type="integer"), example={1}),
+     *             @OA\Property(property="start_date", type="string", format="date", example="2023-08-18"),
+     *             @OA\Property(property="end_date", type="string", format="date", example="2023-08-20"),
+     *             @OA\Property(property="questions", type="array", @OA\Items(
+     *                 @OA\Property(property="content", type="string", example="first question"),
+     *                 @OA\Property(property="type", type="string", example="radio"),
+     *                 @OA\Property(property="en_options", type="array", @OA\Items(type="string"), example={"yes", "no"}),
+     *                 @OA\Property(property="ar_options", type="array", @OA\Items(type="string"), example={"نعم", "لا"}),
+     *                 @OA\Property(property="required", type="boolean", example=true),
+     *                 @OA\Property(property="main_title", type="integer", nullable=true, example=null),
+     *                 @OA\Property(property="sub_title", type="integer", nullable=true, example=null),
+     *                 @OA\Property(property="length", type="integer", example=4),
+     *                 @OA\Property(property="en_content", type="string", example="q1"),
+     *             )),
+     *             @OA\Property(property="questions_count", type="integer", example=3),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="questions", type="object", example={
+     *                 "0": {
+     *                     "content": "first question",
+     *                     "main_title": null,
+     *                     "sub_title": null
+     *                 },
+     *                 "main_title1": {
+     *                     "0": {
+     *                         "content": "second questions",
+     *                         "main_title": 1,
+     *                         "sub_title": null
+     *                     },
+     *                     "sub_title1": {
+     *                         {
+     *                             "content": "third questions",
+     *                             "main_title": 1,
+     *                             "sub_title": 1
+     *                         },
+     *                         {
+     *                             "content": "6 questions",
+     *                             "main_title": 1,
+     *                             "sub_title": 1
+     *                         }
+     *                     },
+     *                     "1": {
+     *                         "content": "5 questions",
+     *                         "main_title": 1,
+     *                         "sub_title": null
+     *                     }
+     *                 },
+     *                 "main_title2": {
+     *                     "sub_title2": {
+     *                         {
+     *                             "content": "4 questions",
+     *                             "main_title": 2,
+     *                             "sub_title": 2
+     *                         },
+     *                         {
+     *                             "content": "9 questions",
+     *                             "main_title": 2,
+     *                             "sub_title": 2,
+     *                  
+     *                         }
+     *                     },
+     *                     "0": {
+     *                         "content": "8 questions",
+     *                         "main_title": 2,
+     *                         "sub_title": null,
+     *                     }
+     *                 },
+     *                 "1": {
+     *                     "content": "7 questions",
+     *                     "main_title": null,
+     *                     "sub_title": null
+     *                 }
+     *             }),
+     *         ),
+     *     ),
+     *  security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+    public function sortsurveyDetails(Request $request)
+    {
+        $this->validate($request, [
+            'questions' => 'array'
+        ]);
+        $survey_questions = [];
+        $main_titles = [];
+        $sub_titles = [];
+        // return $request->all();
+        $questions = $request->questions;
+        foreach ($questions as $question) {
+            if ($question['main_title'] !== null) {
+                $main_title = MainTitle::query()->findOrFail($question['main_title']);
+                if (!in_array($main_title->id, $main_titles)) {
+                    $main_titles[] = $main_title->id;
+                    $survey_questions[$main_title->name] = [];
+                }
+                if ($question['sub_title'] !== null) {
+                    $sub_title = SubTitle::query()->findOrFail($question['sub_title']);
+                    if (!in_array($sub_title->id, $sub_titles)) {
+                        $survey_questions[$main_title->name][$sub_title->name] = [];
+                        $sub_titles[] = $sub_title->id;
+                    }
+                    array_push($survey_questions[$main_title->name][$sub_title->name], $question);
+                } else {
+                    array_push($survey_questions[$main_title->name], $question);
+                }
+            } else {
+                array_push($survey_questions, $question);
+            }
+        }
+        return response()->json([
+            'questions' => $survey_questions
         ]);
     }
 }

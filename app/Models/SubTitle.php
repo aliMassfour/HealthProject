@@ -10,7 +10,8 @@ class SubTitle extends Model
     use HasFactory;
     protected $fillable=[
         'name' ,
-        'main_title' 
+        'main_title' ,
+        'en_name'
     ];
     public function MainTitle()
     {

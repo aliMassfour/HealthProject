@@ -139,9 +139,14 @@ class HomeController extends Controller
      *                         example="9876543210"
      *                     )
      *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="total",
+     *                 type="integer"
      *             )
      *         )
      *     ),
+     *    security={{"bearerAuth": {}}}
      * )
      */
     public function dashboard()
@@ -151,7 +156,8 @@ class HomeController extends Controller
         $users = $UserController->index('user');
         return response()->json([
             'auth_user' => $user,
-            'users' => $users->original['users']
+            'users' => $users->original['users'],
+            'total' => $users->original['total']
         ]);
     }
 }

@@ -9,7 +9,7 @@ class MainTitle extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'name'
+        'name','en_name'
     ];
     public function survey()
     {

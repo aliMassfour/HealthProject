@@ -49,7 +49,8 @@ class MainTitleController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="name", type="string", example="Example Title")
+     *             @OA\Property(property="name", type="string", example="Example Title"),
+     *             @OA\Property(property="en_name", type="string", example="Example Title")
      *         )
      *     ),
      *     @OA\Response(
@@ -62,7 +63,8 @@ class MainTitleController extends Controller
      *                 type="object",
      *                 @OA\Property(property="name", type="string"),
      *                 @OA\Property(property="created_at", type="string", format="date-time"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 @OA\Property(property="updated_at", type="string", format="date-time"),
+     *                 @OA\Property(property="en_name", type="string")
      *             )
      *         )
      *     ),
@@ -73,14 +75,15 @@ class MainTitleController extends Controller
      */
     public function store(Request $request)
     {
+        
         $this->validate($request, [
             'name' => 'required',
+            'en_name' => 'required'
         ]);
-
         $main_title = MainTitle::query()->create([
-            'name' => $request->name
+            'name' => $request->name ,
+            'en_name' => $request->en_name
         ]);
-
         return response()->json([
             "message" => 'Main title created successfully',
             'main_title' => $main_title

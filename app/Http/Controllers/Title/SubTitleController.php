@@ -31,7 +31,8 @@ class SubTitleController extends Controller
      *                     @OA\Property(property="id", type="int"),
      *                     @OA\Property(property="name", type="string"),
      *                     @OA\Property(property="created_at", type="string", format="date-time"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                     @OA\Property(property="updated_at", type="string", format="date-time"),
+     *                      @OA\Property(property="en_name", type="string")
      *                 )
      *             )
      *         )
@@ -91,10 +92,11 @@ class SubTitleController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
-
+            'en_name' => 'required'
         ]);
         $sub_title = $main_title->SubTitles()->create([
-            'name' => $request->name
+            'name' => $request->name,
+            'en_name' => $request->en_name
         ]);
         return response()->json([
             'message' => 'sub title created successfully',

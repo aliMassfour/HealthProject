@@ -330,6 +330,69 @@
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/lazyusers/notificate/{survey}": {
+            "post": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Send notifications for unanswered surveys",
+                "description": "Sends notifications to users who have not answered the specified survey.",
+                "parameters": [
+                    {
+                        "name": "survey",
+                        "in": "path",
+                        "description": "ID of the survey",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Users have been notified successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Survey not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Survey not found"
                                         }
                                     },
                                     "type": "object"
@@ -748,7 +811,20 @@
                                                 "type": {
                                                     "type": "string"
                                                 },
-                                                "options": {
+                                                "ar_options": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "null"
+                                                        }
+                                                    ]
+                                                },
+                                                "en_options": {
                                                     "oneOf": [
                                                         {
                                                             "type": "array",
@@ -1228,6 +1304,199 @@
                 ]
             }
         },
+        "/survey/details": {
+            "post": {
+                "tags": [
+                    "surveys"
+                ],
+                "summary": "Sort survey details",
+                "description": "Sorts the survey details based on main titles and sub titles.",
+                "operationId": "ec50b2a416da1f12cb80635da7438114",
+                "requestBody": {
+                    "description": "Request body",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "ar_name": {
+                                        "type": "string",
+                                        "example": "الاستبيان الاول"
+                                    },
+                                    "en_name": {
+                                        "type": "string",
+                                        "example": "first survey"
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "#0ffff"
+                                    },
+                                    "volunteer": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1
+                                        ]
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2023-08-18"
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2023-08-20"
+                                    },
+                                    "questions": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "content": {
+                                                    "type": "string",
+                                                    "example": "first question"
+                                                },
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "radio"
+                                                },
+                                                "en_options": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "yes",
+                                                        "no"
+                                                    ]
+                                                },
+                                                "ar_options": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    },
+                                                    "example": [
+                                                        "نعم",
+                                                        "لا"
+                                                    ]
+                                                },
+                                                "required": {
+                                                    "type": "boolean",
+                                                    "example": true
+                                                },
+                                                "main_title": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "sub_title": {
+                                                    "type": "integer",
+                                                    "example": null,
+                                                    "nullable": true
+                                                },
+                                                "length": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "en_content": {
+                                                    "type": "string",
+                                                    "example": "q1"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "questions_count": {
+                                        "type": "integer",
+                                        "example": 3
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "questions": {
+                                            "type": "object",
+                                            "example": {
+                                                "0": {
+                                                    "content": "first question",
+                                                    "main_title": null,
+                                                    "sub_title": null
+                                                },
+                                                "main_title1": {
+                                                    "0": {
+                                                        "content": "second questions",
+                                                        "main_title": 1,
+                                                        "sub_title": null
+                                                    },
+                                                    "sub_title1": [
+                                                        {
+                                                            "content": "third questions",
+                                                            "main_title": 1,
+                                                            "sub_title": 1
+                                                        },
+                                                        {
+                                                            "content": "6 questions",
+                                                            "main_title": 1,
+                                                            "sub_title": 1
+                                                        }
+                                                    ],
+                                                    "1": {
+                                                        "content": "5 questions",
+                                                        "main_title": 1,
+                                                        "sub_title": null
+                                                    }
+                                                },
+                                                "main_title2": {
+                                                    "sub_title2": [
+                                                        {
+                                                            "content": "4 questions",
+                                                            "main_title": 2,
+                                                            "sub_title": 2
+                                                        },
+                                                        {
+                                                            "content": "9 questions",
+                                                            "main_title": 2,
+                                                            "sub_title": 2
+                                                        }
+                                                    ],
+                                                    "0": {
+                                                        "content": "8 questions",
+                                                        "main_title": 2,
+                                                        "sub_title": null
+                                                    }
+                                                },
+                                                "1": {
+                                                    "content": "7 questions",
+                                                    "main_title": null,
+                                                    "sub_title": null
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/maintitle": {
             "get": {
                 "tags": [
@@ -1294,6 +1563,10 @@
                                     "name": {
                                         "type": "string",
                                         "example": "Example Title"
+                                    },
+                                    "en_name": {
+                                        "type": "string",
+                                        "example": "Example Title"
                                     }
                                 },
                                 "type": "object"
@@ -1324,6 +1597,9 @@
                                                 "updated_at": {
                                                     "type": "string",
                                                     "format": "date-time"
+                                                },
+                                                "en_name": {
+                                                    "type": "string"
                                                 }
                                             },
                                             "type": "object"
@@ -1385,6 +1661,9 @@
                                                     "updated_at": {
                                                         "type": "string",
                                                         "format": "date-time"
+                                                    },
+                                                    "en_name": {
+                                                        "type": "string"
                                                     }
                                                 },
                                                 "type": "object"
@@ -1581,6 +1860,10 @@
                                                 },
                                                 "type": "object"
                                             }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 10
                                         }
                                     },
                                     "type": "object"

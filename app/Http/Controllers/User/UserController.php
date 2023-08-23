@@ -110,6 +110,11 @@ class UserController extends Controller
      *                         example="directorate one"
      *                     ),
      *                 )
+     *             ),
+     *             @OA\Property(
+     *                 property="total",
+     *                 type="integer",
+     *                 example=10
      *             )
      *         )
      *     ),
@@ -118,14 +123,22 @@ class UserController extends Controller
      */
     public function index($role)
     {
+        $users = [];
         if ($role == 'admin') {
             $users = User::where('role_id', '1')->get();
         } else {
             $users = User::where('role_id', '<>', '1')->get();
         }
-
-
-        //add the  mobile app view needed
+        if (sizeOf($users) == 0) {
+            return response()->json(
+                [
+                    'message' => 'there is not any user have role : ' . $role,
+                    'users' => [],
+                    'total' => 0
+                ]
+            );
+        }
+        // Add the mobile app view needed
         $users->filter(function ($user) {
             $user->setAttribute('city_name', $user->city->name);
             $user->setAttribute('directorate_name', $user->directorate->name);
@@ -135,7 +148,8 @@ class UserController extends Controller
             return $user;
         });
         return response()->json([
-            'users' => $users
+            'users' => $users,
+            'total' => sizeOf($users)
         ]);
     }
     /**
@@ -398,7 +412,7 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //validate
-        return $request->all();
+        // return $request->all();
         $this->validate($request, [
             'name' => 'required',
             'phone' => 'required',
@@ -414,6 +428,11 @@ class UserController extends Controller
             'evaluation' => 'required|string'
         ]);
         try {
+            if (User::where('username', $request->username)->exists()) {
+                return response()->json([
+                    'message' => 'user name already taken'
+                ], 409);
+            }
             //create new user
             $user = User::create([
                 'name' => $request->name,
@@ -421,7 +440,7 @@ class UserController extends Controller
                 'password' => Hash::make($request->password),
                 'city_id' => $request->city,
                 'directorate_id' => $request->directorate,
-                'role_id' => $request->type=='admin' ? 1 : 2,
+                'role_id' => $request->type == 'admin' ? 1 : 2,
                 'phone' => $request->phone,
                 'gender' => $request->gender,
                 'certificate' => $request->type == 'volunteer' ? json_encode($request->certificate) : null,
