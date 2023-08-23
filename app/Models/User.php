@@ -71,7 +71,6 @@ class User extends Authenticatable
         $entries = $survey->entries;
         // return $[entries];
         foreach ($entries as $entry) {
-            return $entry->participant_id;
             if ($entry->participant_id == $this->id) {
                 return true;
             }

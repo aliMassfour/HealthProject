@@ -504,7 +504,7 @@ class SurveyController extends Controller
         $answers_users = [];
         foreach ($users as $user) {
             // return $user->isAnswer($survey);
-            if ($user->isAnswer($survey)) {
+            if ($user->isAnswer($survey)==true) {
                 $answers_users[] = $user;
             }
         }
