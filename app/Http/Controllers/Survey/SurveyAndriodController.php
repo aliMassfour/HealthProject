@@ -13,74 +13,90 @@ class SurveyAndriodController extends Controller
     {
         $this->middleware('auth:sanctum');
     }
-    /**
-     * @OA\Get(
-     *     path="/app/survey/index",
-     *     summary="Show all available surveys for authenticated user",
-     *     description="Send a request to fetch surveys",
-     *     operationId="AppSurveyIndex",
-     *     tags={"Android Application"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successfully retrieved surveys",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(
-     *                 property="surveys",
-     *                 type="array",
-     *                 @OA\Items(
-     *                     type="object",
-     *                     @OA\Property(
-     *                         property="ar_name",
-     *                         type="string"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="en_name",
-     *                         type="string"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="color",
-     *                         type="string"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="questions_count",
-     *                         type="integer"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="start_date",
-     *                         type="string",
-     *                         format="date-time"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="end_date",
-     *                         type="string",
-     *                         format="date-time"
-     *                     ),
-     *                       @OA\Property(
-     *                         property="remaining_days",
-     *                         type="integer",
-     *                     ),
-     *                     @OA\Property(
-     *                         property="status",
-     *                         type="string"
-     *                     ),
-     *                     @OA\Property(
-     *                         property="notes",
-     *                         type="array",
-     *                         @OA\Items(
-     *                             type="string"
-     *                         )
-     *                     )
-     *                 )
-     *             )
-     *         )
-     *     ),
-     *     security={{"bearerAuth": {}}}
-     * )
-     */
+   /**
+ * @OA\Get(
+ *     path="/app/survey/index",
+ *     summary="Show all available surveys for authenticated user",
+ *     description="Send a request to fetch surveys",
+ *     operationId="AppSurveyIndex",
+ *     tags={"Android Application"},
+ *     @OA\Response(
+ *         response=200,
+ *         description="Successfully retrieved surveys",
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(
+ *                 property="surveys",
+ *                 type="array",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     @OA\Property(
+ *                         property="ar_name",
+ *                         type="string"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="en_name",
+ *                         type="string"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="color",
+ *                         type="string"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="questions_count",
+ *                         type="integer"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="start_date",
+ *                         type="string",
+ *                         format="date-time"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="end_date",
+ *                         type="string",
+ *                         format="date-time"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="remaining_days",
+ *                         type="integer"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="status",
+ *                         type="string"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="notes",
+ *                         type="array",
+ *                         @OA\Items(
+ *                             type="string"
+ *                         )
+ *                     )
+ *                 )
+ *             ),
+ *             @OA\Property(
+ *                 property="notifications",
+ *                 type="array",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     @OA\Property(
+ *                         property="message",
+ *                         type="string"
+ *                     ),
+ *                     @OA\Property(
+ *                         property="reading_status",
+ *                         type="integer"
+ *                     )
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     security={{"bearerAuth": {}}}
+ * )
+ */
     public function index()
     {
         $user = auth()->user();
+        $notifications = $user->notifications;
         $surveys = Survey::where('status', 'valid')
             ->with('users', 'entries')
             ->whereHas('users', function ($query) use ($user) {
@@ -95,15 +111,19 @@ class SurveyAndriodController extends Controller
                 return $survey->created_at->format('Y-M-D');
             });
         $surveys->makeHidden(['entries', 'pivot', 'users']);
-        foreach ($surveys as $deate_group) {
-            foreach ($deate_group as &$survey) {
+        foreach ($surveys as $date_group) {
+            foreach ($date_group as &$survey) {
                 $end = Carbon::parse($survey->end_date);
                 $remaining_days = $end->diff(now())->days;
                 $survey->setAttribute('remaining_days', $remaining_days);
             }
         }
+        $notifications->filter(function ($notification) {
+            $notification->update(['reading_status', '0']);
+        });
         return response()->json([
-            'surveys' => $surveys
+            'surveys' => $surveys,
+            'notifications' => $notifications
         ]);
     }
     /**
@@ -185,7 +205,7 @@ class SurveyAndriodController extends Controller
         $questions->filter(function ($question) {
             $main_title_name = $question->MainTile !== null ?  $question->MainTitle->name : null;
             $sub_title_name = $question->SubTitle !== null ? $question->SubTitle->name : null;
-            $question->setAttribute('main_title',$main_title_name);
+            $question->setAttribute('main_title', $main_title_name);
             $question->setAttribute('sub_title', $sub_title_name);
             $question->options = json_decode($question->options);
             return $question;
